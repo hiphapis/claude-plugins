@@ -1,0 +1,37 @@
+# obsidian-project-docs
+
+A Claude Code plugin that packages a full methodology for turning a software
+project's documentation into a single, well-organized, link-rich **Obsidian
+vault** shared by Claude Code, Claude Desktop, and you via git.
+
+It bundles one skill (`obsidian-project-docs`) covering:
+
+- **Claude Code side** — consolidate scattered docs into `<repo>/docs`,
+  categorize, migrate existing files (inventory → approve → move + stub), add
+  frontmatter and wikilinks, reconstruct ADRs, update `.gitignore` and
+  `CLAUDE.md`.
+- **Claude Desktop side** — install/configure the Obsidian "Claude Code MCP"
+  plugin, wire Claude Desktop via the `mcp-remote` bridge, connect Claude Code
+  via `/ide`, verify, and generate + apply project instructions.
+- **Troubleshooting** — the real gotchas (nvm node-version mismatch, vault port
+  conflicts, bare-`url` config failure, minimal PATH, two-machine sessions).
+
+## Install
+
+```
+/plugin marketplace add hiphapis/obsidian-docs-marketplace
+/plugin install obsidian-project-docs@obsidian-docs-marketplace
+/reload-plugins
+```
+
+The skill then registers as `obsidian-project-docs:obsidian-project-docs` and
+triggers when you ask to organize project docs into Obsidian, set up a docs
+vault, consolidate fragmented docs, connect Obsidian to Claude Desktop/Code via
+MCP, or migrate docs into a vault.
+
+## Publishing
+
+Authored by [Johan Kim](https://github.com/hiphapis). The repo must be
+**public** for Claude Code to fetch it. Bump `version` in both
+`.claude-plugin/marketplace.json` and this plugin's `plugin.json` on every
+change that should reach installed users.
