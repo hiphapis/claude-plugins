@@ -1,13 +1,13 @@
 {
-  "name": "obsidian-project-docs",
+  "name": "docs-with-obsidian",
   "version": "0.1.0",
   "description": "Set up and maintain a project's documentation as an Obsidian vault living in the repo's /docs folder — consolidate scattered docs, categorize, wire wikilinks, migrate existing files, connect Claude Desktop via the Obsidian MCP, and generate reusable project instructions.",
   "author": {
     "name": "Johan Kim",
     "url": "https://github.com/hiphapis"
   },
-  "homepage": "https://github.com/hiphapis/obsidian-docs-marketplace",
-  "repository": "https://github.com/hiphapis/obsidian-docs-marketplace",
+  "homepage": "https://github.com/hiphapis/docs-with-obsidian",
+  "repository": "https://github.com/hiphapis/docs-with-obsidian",
   "license": "MIT",
   "keywords": [
     "obsidian",

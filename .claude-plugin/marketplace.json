@@ -1,5 +1,5 @@
 {
-  "name": "obsidian-docs-marketplace",
+  "name": "docs-with-obsidian",
   "owner": {
     "name": "Johan Kim",
     "url": "https://github.com/hiphapis"
@@ -10,8 +10,8 @@
   },
   "plugins": [
     {
-      "name": "obsidian-project-docs",
-      "source": "./plugins/obsidian-project-docs",
+      "name": "docs-with-obsidian",
+      "source": "./plugins/docs-with-obsidian",
       "description": "Set up and maintain a project's docs as an Obsidian vault in the repo's /docs folder: consolidate scattered docs, categorize, wikilink, migrate, connect Claude Desktop via the Obsidian MCP, and generate reusable project instructions.",
       "version": "0.1.0"
     }

@@ -1,7 +1,7 @@
-# obsidian-docs-marketplace
+# docs-with-obsidian
 
 A personal [Claude Code plugin marketplace](https://code.claude.com/docs/en/discover-plugins).
-Currently ships one plugin: **obsidian-project-docs**.
+Currently ships one plugin: **docs-with-obsidian**.
 
 ## Structure
 
@@ -9,9 +9,9 @@ Currently ships one plugin: **obsidian-project-docs**.
 .
 ├── .claude-plugin/marketplace.json     # marketplace registry
 └── plugins/
-    └── obsidian-project-docs/
+    └── docs-with-obsidian/
         ├── .claude-plugin/plugin.json  # plugin manifest
-        ├── skills/obsidian-project-docs/
+        ├── skills/docs-with-obsidian/
         │   ├── SKILL.md
         │   ├── references/
         │   └── assets/
@@ -20,22 +20,22 @@ Currently ships one plugin: **obsidian-project-docs**.
 
 ## Publish (do this from Claude Code / your machine)
 
-1. Create a **public** GitHub repo named `obsidian-docs-marketplace`.
+1. Create a **public** GitHub repo named `docs-with-obsidian`.
 2. Push:
    ```bash
    git init
    git add .
-   git commit -m "obsidian-project-docs plugin v0.1.0"
+   git commit -m "docs-with-obsidian plugin v0.1.0"
    git branch -M main
-   git remote add origin git@github.com:hiphapis/obsidian-docs-marketplace.git
+   git remote add origin git@github.com:hiphapis/docs-with-obsidian.git
    git push -u origin main
    ```
 
 ## Install (in Claude Code)
 
 ```
-/plugin marketplace add hiphapis/obsidian-docs-marketplace
-/plugin install obsidian-project-docs@obsidian-docs-marketplace
+/plugin marketplace add hiphapis/docs-with-obsidian
+/plugin install docs-with-obsidian@docs-with-obsidian
 /reload-plugins
 ```
 

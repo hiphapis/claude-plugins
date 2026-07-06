@@ -1,5 +1,5 @@
 ---
-name: obsidian-project-docs
+name: docs-with-obsidian
 description: >-
   Set up and maintain a software project's documentation as an Obsidian vault
   living in the repo's /docs folder — consolidating scattered docs into one

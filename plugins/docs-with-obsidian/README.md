@@ -1,10 +1,10 @@
-# obsidian-project-docs
+# docs-with-obsidian
 
 A Claude Code plugin that packages a full methodology for turning a software
 project's documentation into a single, well-organized, link-rich **Obsidian
 vault** shared by Claude Code, Claude Desktop, and you via git.
 
-It bundles one skill (`obsidian-project-docs`) covering:
+It bundles one skill (`docs-with-obsidian`) covering:
 
 - **Claude Code side** — consolidate scattered docs into `<repo>/docs`,
   categorize, migrate existing files (inventory → approve → move + stub), add
@@ -19,12 +19,12 @@ It bundles one skill (`obsidian-project-docs`) covering:
 ## Install
 
 ```
-/plugin marketplace add hiphapis/obsidian-docs-marketplace
-/plugin install obsidian-project-docs@obsidian-docs-marketplace
+/plugin marketplace add hiphapis/docs-with-obsidian
+/plugin install docs-with-obsidian@docs-with-obsidian
 /reload-plugins
 ```
 
-The skill then registers as `obsidian-project-docs:obsidian-project-docs` and
+The skill then registers as `docs-with-obsidian:docs-with-obsidian` and
 triggers when you ask to organize project docs into Obsidian, set up a docs
 vault, consolidate fragmented docs, connect Obsidian to Claude Desktop/Code via
 MCP, or migrate docs into a vault.
