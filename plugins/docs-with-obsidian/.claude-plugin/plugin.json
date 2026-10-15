@@ -6,8 +6,8 @@
     "name": "Johan Kim",
     "url": "https://github.com/hiphapis"
   },
-  "homepage": "https://github.com/hiphapis/docs-with-obsidian",
-  "repository": "https://github.com/hiphapis/docs-with-obsidian",
+  "homepage": "https://github.com/hiphapis/claude-plugins/tree/main/plugins/docs-with-obsidian",
+  "repository": "https://github.com/hiphapis/claude-plugins",
   "license": "MIT",
   "keywords": [
     "obsidian",

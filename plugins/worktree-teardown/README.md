@@ -17,15 +17,15 @@ The skill checks 11 items, grades each one, runs the wrap-up you approve, re-aud
 As a plugin (recommended):
 
 ```
-/plugin marketplace add hiphapis/worktree-teardown
-/plugin install worktree-teardown@worktree-teardown
+/plugin marketplace add hiphapis/claude-plugins
+/plugin install worktree-teardown@hiphapis
 ```
 
 Or copy the skill folder by hand:
 
 ```bash
-git clone https://github.com/hiphapis/worktree-teardown
-cp -r worktree-teardown/skills/worktree-teardown ~/.claude/skills/
+git clone https://github.com/hiphapis/claude-plugins.git
+cp -r claude-plugins/plugins/worktree-teardown/skills/worktree-teardown ~/.claude/skills/
 ```
 
 ## Use

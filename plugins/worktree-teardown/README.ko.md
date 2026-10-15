@@ -17,15 +17,15 @@ git 워크트리를 **지우기 전에** 감사해서, 지워도 아무것도 �
 플러그인으로 설치(권장):
 
 ```
-/plugin marketplace add hiphapis/worktree-teardown
-/plugin install worktree-teardown@worktree-teardown
+/plugin marketplace add hiphapis/claude-plugins
+/plugin install worktree-teardown@hiphapis
 ```
 
 또는 스킬 폴더를 직접 복사:
 
 ```bash
-git clone https://github.com/hiphapis/worktree-teardown
-cp -r worktree-teardown/skills/worktree-teardown ~/.claude/skills/
+git clone https://github.com/hiphapis/claude-plugins.git
+cp -r claude-plugins/plugins/worktree-teardown/skills/worktree-teardown ~/.claude/skills/
 ```
 
 ## 사용

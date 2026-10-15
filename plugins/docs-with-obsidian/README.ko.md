@@ -51,16 +51,16 @@ skill(`docs-with-obsidian`):
 **Option A — marketplace (권장):**
 
 ```
-/plugin marketplace add hiphapis/docs-with-obsidian
-/plugin install docs-with-obsidian@docs-with-obsidian
+/plugin marketplace add hiphapis/claude-plugins
+/plugin install docs-with-obsidian@hiphapis
 /reload-plugins
 ```
 
 **Option B — local clone (개발용):**
 
 ```bash
-git clone https://github.com/hiphapis/docs-with-obsidian.git
-claude --plugin-dir ./docs-with-obsidian
+git clone https://github.com/hiphapis/claude-plugins.git
+claude --plugin-dir ./claude-plugins/plugins/docs-with-obsidian
 ```
 
 이 skill은 `docs-with-obsidian:docs-with-obsidian`으로 등록되며, 프로젝트 문서를

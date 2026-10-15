@@ -45,16 +45,16 @@ vault 位于 **`<repo>/docs`**——而非仓库根目录（那样会把 `node_m
 **方式 A —— 通过 marketplace（推荐）：**
 
 ```
-/plugin marketplace add hiphapis/docs-with-obsidian
-/plugin install docs-with-obsidian@docs-with-obsidian
+/plugin marketplace add hiphapis/claude-plugins
+/plugin install docs-with-obsidian@hiphapis
 /reload-plugins
 ```
 
 **方式 B —— 本地克隆（用于开发）：**
 
 ```bash
-git clone https://github.com/hiphapis/docs-with-obsidian.git
-claude --plugin-dir ./docs-with-obsidian
+git clone https://github.com/hiphapis/claude-plugins.git
+claude --plugin-dir ./claude-plugins/plugins/docs-with-obsidian
 ```
 
 该技能注册为 `docs-with-obsidian:docs-with-obsidian`，每当你请求把项目文档整理进

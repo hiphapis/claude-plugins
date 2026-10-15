@@ -50,16 +50,16 @@ templates and reference procedures to execute it:
 **Option A — marketplace (recommended):**
 
 ```
-/plugin marketplace add hiphapis/docs-with-obsidian
-/plugin install docs-with-obsidian@docs-with-obsidian
+/plugin marketplace add hiphapis/claude-plugins
+/plugin install docs-with-obsidian@hiphapis
 /reload-plugins
 ```
 
 **Option B — local clone (for development):**
 
 ```bash
-git clone https://github.com/hiphapis/docs-with-obsidian.git
-claude --plugin-dir ./docs-with-obsidian
+git clone https://github.com/hiphapis/claude-plugins.git
+claude --plugin-dir ./claude-plugins/plugins/docs-with-obsidian
 ```
 
 The skill registers as `docs-with-obsidian:docs-with-obsidian` and triggers

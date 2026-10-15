@@ -4,8 +4,8 @@
   "description": "Audit a git worktree before deleting it — uncommitted/unpushed/unmerged work, stash, non-regenerable ignored assets, issue & Orca state, doc drift — then wrap up with approval and hand the delete command to the human",
   "version": "0.1.0",
   "author": { "name": "Johan Kim", "url": "https://github.com/hiphapis" },
-  "homepage": "https://github.com/hiphapis/worktree-teardown",
-  "repository": "https://github.com/hiphapis/worktree-teardown",
+  "homepage": "https://github.com/hiphapis/claude-plugins/tree/main/plugins/worktree-teardown",
+  "repository": "https://github.com/hiphapis/claude-plugins",
   "license": "MIT",
   "keywords": ["git", "worktree", "audit", "orca", "cleanup"]
 }

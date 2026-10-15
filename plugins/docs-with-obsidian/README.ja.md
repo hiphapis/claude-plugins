@@ -53,16 +53,16 @@ vault は **`<repo>/docs`** に置かれます — リポジトリのルート�
 **オプション A — marketplace（推奨）:**
 
 ```
-/plugin marketplace add hiphapis/docs-with-obsidian
-/plugin install docs-with-obsidian@docs-with-obsidian
+/plugin marketplace add hiphapis/claude-plugins
+/plugin install docs-with-obsidian@hiphapis
 /reload-plugins
 ```
 
 **オプション B — ローカルクローン（開発用）:**
 
 ```bash
-git clone https://github.com/hiphapis/docs-with-obsidian.git
-claude --plugin-dir ./docs-with-obsidian
+git clone https://github.com/hiphapis/claude-plugins.git
+claude --plugin-dir ./claude-plugins/plugins/docs-with-obsidian
 ```
 
 このスキルは `docs-with-obsidian:docs-with-obsidian` として登録され、
