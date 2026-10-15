@@ -1,0 +1,12 @@
+{
+  "name": "worktree-teardown",
+  "description": "Safe-delete audit for git worktrees",
+  "owner": { "name": "Johan Kim", "url": "https://github.com/hiphapis" },
+  "plugins": [
+    {
+      "name": "worktree-teardown",
+      "source": "./",
+      "description": "Audit a git worktree before deleting it, wrap up with approval, and let the human run the delete"
+    }
+  ]
+}
