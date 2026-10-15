@@ -30,6 +30,7 @@ Never copy a project's completion commands into your report as if they were this
 
 1. **Resolve target** — Orca metadata if the worktree is Orca-managed, else `git worktree list --porcelain`
 2. **Collect the 10 mechanical items** — independent commands, run in parallel
+   Items 10 (doc drift) and 11 (records) are **not optional** — skipping them is how stale docs survive. If the branch changed no documented facts, say so explicitly.
 3. **Evaluate the 1 judgment item** — record consistency. Never auto-assign BLOCKED
 4. **Report + ask for approval** — each finding as `what is lost → where it is → one-line fix`
 5. **Do the approved wrap-up** — preservation is **copy only**

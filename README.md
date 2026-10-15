@@ -47,7 +47,7 @@ Or invoke it directly with `/worktree-teardown:worktree-teardown`. To audit a di
 | 4 | Unmerged commits (squash-aware via `git cherry`) | you choose merge / keep / discard |
 | 5 | Stash, including orphans | branch-owned stash and the branch is discarded |
 | 6 | Non-regenerable ignored assets (blacklist, `.env` judged by `diff`) | preserve-class assets exist |
-| 7 | Issue state (GitHub) | per project labels |
+| 7 | Issue or PR state (GitHub) | per project labels |
 | 8 | Orca workspace status, crossed with the issue | issue closed but status not `completed` |
 | 9 | Child worktrees (Orca) | any |
 | 10 | Canonical-doc drift: removed facts still stated in docs | found in canonical paths |

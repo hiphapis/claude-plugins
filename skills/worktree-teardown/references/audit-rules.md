@@ -176,6 +176,18 @@ gh issue view <n> --json state,stateReason,title,labels,comments
 
 **Cross-check redundant representations.** If the project encodes state twice (e.g. label *and* title emoji), a mismatch between them is itself a sign the procedure stopped halfway → 🟡. Reading labels alone lets that through.
 
+**Linked PR instead of an issue** (Orca `linkedPR`, or `gh pr list --head <branch>`):
+
+```bash
+gh pr view <n> --json state,mergedAt,headRefOid
+```
+
+| PR | Verdict |
+| --- | --- |
+| merged | ✓ (item 4 should agree — if it doesn't, the merge was squash: check `cherry`) |
+| open | 🟡 — deleting now only loses the local environment if commits are pushed; re-audit after merge |
+| closed, not merged | 🟡 — treat like the Discard choice in §3.2: record the reason |
+
 Orca `workspaceStatus` alone is usually `in-progress` everywhere and only produces alert fatigue — judge it only crossed with the issue. No Orca → item 8 is N/A.
 
 The wrap-up commands come from the project's completion procedure. Without one, the generic wrap-up is: comment changes/verification/remaining risk on the issue → update docs → close as completed (with approval).

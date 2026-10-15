@@ -47,7 +47,7 @@ cp -r worktree-teardown/skills/worktree-teardown ~/.claude/skills/
 | 4 | 병합 안 한 커밋(`git cherry` 로 squash 병합 판별) | 병합·보존·폐기 중 선택 |
 | 5 | stash(고아 stash 포함) | 이 브랜치 소유 stash가 있는데 브랜치를 폐기함 |
 | 6 | 재생성 불가 ignored 자산(블랙리스트, `.env` 는 `diff` 로 판정) | 보존 대상이 있음 |
-| 7 | 이슈 상태(GitHub) | 프로젝트 라벨 기준 |
+| 7 | 이슈 또는 PR 상태(GitHub) | 프로젝트 라벨 기준 |
 | 8 | Orca 워크스페이스 상태(이슈와 교차 판정) | 이슈는 닫혔는데 상태가 `completed` 아님 |
 | 9 | 자식 워크트리(Orca) | 하나라도 있음 |
 | 10 | 정본 문서 드리프트: 이번 작업이 없앤 사실이 문서에 남아 있음 | 정본 경로에서 발견 |
