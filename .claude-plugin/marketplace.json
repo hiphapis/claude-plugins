@@ -1,7 +1,10 @@
 {
   "name": "hiphapis",
   "description": "Claude Code plugins by Johan Kim — docs vaults, safe worktree teardown, and loop engineering",
-  "owner": { "name": "Johan Kim", "url": "https://github.com/hiphapis" },
+  "owner": {
+    "name": "Johan Kim",
+    "url": "https://github.com/hiphapis"
+  },
   "plugins": [
     {
       "name": "docs-with-obsidian",
@@ -14,8 +17,16 @@
       "description": "Audit a git worktree before deleting it, wrap up with approval, and let the human run the delete"
     },
     {
+      "name": "common-rules",
+      "source": "./plugins/common-rules",
+      "description": "Merge a personal set of agent working rules into a repo's existing rules — add what's missing, ask how to resolve each conflict, and record the decisions"
+    },
+    {
       "name": "loopcraft",
-      "source": { "source": "github", "repo": "hiphapis/loopcraft" },
+      "source": {
+        "source": "github",
+        "repo": "hiphapis/loopcraft"
+      },
       "description": "Loop engineering for Claude Code — persistent memory vault, self-correction hooks, and a 5-stage failure-to-knowledge distillation protocol"
     }
   ]

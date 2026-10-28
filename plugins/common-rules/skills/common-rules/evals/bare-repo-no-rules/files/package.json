@@ -1,0 +1,10 @@
+{
+  "name": "todo-api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "node src/index.js",
+    "lint": "eslint src",
+    "test": "vitest run"
+  }
+}

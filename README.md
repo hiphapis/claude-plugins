@@ -17,6 +17,7 @@ A [Claude Code](https://claude.com/claude-code) plugin marketplace with the plug
 |---|---|---|
 | [docs-with-obsidian](plugins/docs-with-obsidian) | Turn a project's docs into an Obsidian vault in the repo's `/docs` folder, shared by Claude Code, Claude Desktop, and you via git | this repo |
 | [worktree-teardown](plugins/worktree-teardown) | Audit a git worktree before deleting it so nothing gets lost. The human runs the delete | this repo |
+| [common-rules](plugins/common-rules) | Merge my personal agent working rules (orchestrator/worker split, Orca worktrees, issue lifecycle, gates, git, completion reports, docs) into a repo's existing rules. Asks how to resolve each conflict and records the decisions | this repo |
 | [loopcraft](https://github.com/hiphapis/loopcraft) | Loop engineering: persistent memory vault, self-correction hooks, failure-to-knowledge distillation | [hiphapis/loopcraft](https://github.com/hiphapis/loopcraft) |
 
 Small plugins live under `plugins/`. Larger plugins with their own tests, hooks, and release cadence keep their own repository and are listed here by reference.

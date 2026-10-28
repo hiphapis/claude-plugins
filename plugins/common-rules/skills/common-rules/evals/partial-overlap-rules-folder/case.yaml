@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: partial-overlap-rules-folder
+context:
+  scaffold_script: place-files.sh
+expected_outcome: |
+  기존 docs/rules/ 체계 안에 주제별로 병합한다. git add . 금지처럼 이미 있는 룰은 중복 추가하지 않는다. testing.md의 게이트 룰은 JSON 결과 확인·skip 0 기준으로 보강한다. 맞는 파일이 없는 범주는 docs/rules/에 새 파일로 만들고 AGENTS.md 인덱스에 한 줄씩 추가한다. 기존 문장은 그대로 남는다. 적용 기록과 보고서가 있다.

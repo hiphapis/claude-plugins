@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: conflicting-rules
+context:
+  scaffold_script: place-files.sh
+expected_outcome: |
+  기존 AGENTS.md의 '한두 줄은 오케스트레이터가 직접 수정', 'main에는 --no-ff 머지 커밋', '트레일러에 모델명 금지' 문장이 그대로 남는다(물을 수 없으므로 충돌을 반영하지 않음). 이 세 충돌이 해당 룰 ID와 함께 적용 기록과 보고서에 미결정으로 나온다. 충돌하지 않는 누락 룰은 추가된다.

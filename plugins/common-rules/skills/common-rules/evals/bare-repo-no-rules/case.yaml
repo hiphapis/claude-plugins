@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: bare-repo-no-rules
+context:
+  scaffold_script: place-files.sh
+expected_outcome: |
+  AGENTS.md가 새로 생기고 공통 룰이 범주별 절로 들어간다. docs/ 아래에 새 규칙 폴더는 만들지 않는다(물을 수 없으므로). Orca는 기본 전제라 Orca 룰은 넣고, GitHub 근거가 없어 [gh] 룰은 넣지 않고 적용 기록에 미결정(전제)으로 남긴다. 게이트 명령은 package.json 스크립트로 채우거나 <미정>으로 표시한다. 적용 기록 절과 결과 보고서가 있다.
