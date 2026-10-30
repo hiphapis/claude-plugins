@@ -2,7 +2,7 @@
   "name": "common-rules",
   "displayName": "Common Rules",
   "description": "Merge a personal set of agent working rules (orchestrator/worker split, Orca worktrees, GitHub issue lifecycle, test gates, git, completion reports, docs) into a repo's existing rules — adding what's missing and asking the user how to resolve each conflict",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "author": { "name": "Johan Kim", "url": "https://github.com/hiphapis" },
   "homepage": "https://github.com/hiphapis/claude-plugins/tree/main/plugins/common-rules",
   "repository": "https://github.com/hiphapis/claude-plugins",
