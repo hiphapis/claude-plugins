@@ -110,6 +110,14 @@ def test_plugin_version_tracks_catalog_version():
     )
 
 
+@pytest.mark.parametrize("readme", sorted(PLUGIN.glob("README*.md")), ids=lambda p: p.name)
+def test_readme_states_current_version(readme):
+    """README의 현재 버전 표기가 버전업 때 낡지 않게 한다."""
+    text = read(readme)
+    assert f"0.{HEADER_VERSION}.0" in text, f"{readme.name}에 현재 버전 0.{HEADER_VERSION}.0이 없다"
+    assert f"v{HEADER_VERSION}," in text, f"{readme.name}에 룰 카탈로그 v{HEADER_VERSION} 표기가 없다"
+
+
 def test_history_is_complete_and_matches_header():
     assert max(HISTORY_ENTRIES) == HEADER_VERSION, "변경 이력의 최신 버전이 머리 버전과 다르다"
     assert sorted(HISTORY_ENTRIES) == list(range(1, HEADER_VERSION + 1)), "변경 이력에 빠진 버전이 있다"
