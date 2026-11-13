@@ -17,3 +17,10 @@ jobs:
         run: claude plugin validate .
       - name: Validate plugins
         run: for p in plugins/*/; do claude plugin validate "$p"; done
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest
+      - name: Structural tests
+        # claude plugin validate는 위 단계에서 이미 돌렸으므로 cli 마커는 뺀다
+        run: pytest -m "not cli"
