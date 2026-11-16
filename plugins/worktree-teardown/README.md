@@ -10,7 +10,7 @@ Deleting a worktree rarely loses commits, because git refuses to remove a dirty 
 - **skipped wrap-up**: the issue is still "in progress", the workspace status never changed, docs never updated
 - **stale records**: notes say "unmerged" when it was merged, or the reverse
 
-The skill checks 11 items, grades each one, runs the wrap-up you approve, re-audits, and only then **shows** you the delete command. It never deletes anything itself.
+The skill checks 11 items, grades each one, runs the wrap-up you approve, re-audits, and only then **shows** you the delete command. It deletes the worktree itself only if your project policy explicitly allows it (`## Agent deletion: allowed`).
 
 ## Install
 
@@ -55,7 +55,7 @@ Or invoke it directly with `/worktree-teardown:worktree-teardown`. To audit a di
 
 Grades: 🔴 BLOCKED · 🟡 check · ✓ OK · **N/A**. N/A means a tool your project doesn't use (no Orca, non-GitHub remote), and it doesn't block. A tool you *do* use whose call failed is 🟡, because unverified never counts as OK.
 
-End states: `SAFE` (delete command shown) · `BLOCKED(n)` · `HANDOFF` (merge first, after the wrap-up) · `ABORT`.
+End states: `SAFE` (delete command shown) · `DELETED` (agent deleted it, by project policy) · `BLOCKED(n)` · `HANDOFF` (merge first, after the wrap-up) · `ABORT`.
 
 ## Requirements
 
@@ -70,7 +70,7 @@ Labels, completion steps, which docs are canonical and which are history: these 
 
 ## Safety contract
 
-Never deletes the worktree · never commits for you · never merges, rebases or pushes · never deletes or moves files (preserves by copying) · never closes an issue without approval, and never closes one as `not planned` · never reports a failed check as OK.
+Never deletes the worktree unless project policy explicitly allows it on `SAFE` (and then only with the plain delete command, never `--force`) · never commits for you · never merges, rebases or pushes · never deletes or moves files (preserves by copying) · never closes an issue without approval, and never closes one as `not planned` · never reports a failed check as OK.
 
 The full rulebook is [`skills/worktree-teardown/references/audit-rules.md`](skills/worktree-teardown/references/audit-rules.md).
 

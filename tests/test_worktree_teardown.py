@@ -45,3 +45,14 @@ def test_section_references_in_table_exist():
     sections = set(re.findall(r"^### (3\.\d+) ", AUDIT, re.M))
     cited = set(re.findall(r"§(3\.\d+)", "\n".join("|".join(r) for r in ROWS)))
     assert cited <= sections, f"표가 없는 절을 가리킨다: {cited - sections}"
+
+
+def test_agent_deletion_exception_is_wired():
+    """에이전트 삭제 예외: 설정 섹션·종료 상태·안전 계약이 서로를 가리켜야 한다."""
+    config = read(SKILL_DIR / "references" / "project-config.md")
+    skill = read(SKILL_DIR / "SKILL.md")
+    assert "`## Agent deletion`" in config
+    assert "### 7.1 Agent-deletion exception" in AUDIT
+    assert "| `DELETED` |" in AUDIT
+    assert "§7.1" in AUDIT.split("## 7. Safety contract", 1)[1].split("\n", 3)[2]
+    assert "§7.1" in skill and "`DELETED`" in skill

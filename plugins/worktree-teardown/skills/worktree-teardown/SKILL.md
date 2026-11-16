@@ -1,6 +1,6 @@
 ---
 name: worktree-teardown
-description: Audit a git worktree before it is deleted — what would be lost and which wrap-up steps were skipped. Use when asked "can I delete this worktree", "is it safe to remove", "did I leave anything behind", "clean up worktree", or in Korean "이 워크트리 지워도 돼 / 삭제해도 안전한지 / 흘린 거 없나 / 워크트리 정리 / 폐기해도 되나". Runs 11 audit items (uncommitted, untracked, unpushed, unmerged, stash, non-regenerable ignored assets, issue state, Orca state, child worktrees, canonical-doc drift, record consistency), judges SAFE / BLOCKED, performs approved wrap-up (issue comment/labels, docs, Orca status, asset copies), re-audits, then presents the delete command. The human always runs the deletion.
+description: Audit a git worktree before it is deleted — what would be lost and which wrap-up steps were skipped. Use when asked "can I delete this worktree", "is it safe to remove", "did I leave anything behind", "clean up worktree", or in Korean "이 워크트리 지워도 돼 / 삭제해도 안전한지 / 흘린 거 없나 / 워크트리 정리 / 폐기해도 되나". Runs 11 audit items (uncommitted, untracked, unpushed, unmerged, stash, non-regenerable ignored assets, issue state, Orca state, child worktrees, canonical-doc drift, record consistency), judges SAFE / BLOCKED, performs approved wrap-up (issue comment/labels, docs, Orca status, asset copies), re-audits, then presents the delete command. The human runs the deletion unless the project policy explicitly lets the agent delete a SAFE worktree.
 ---
 
 # Worktree teardown audit
@@ -22,7 +22,8 @@ Never copy a project's completion commands into your report as if they were this
 ## Boundaries
 
 - **Does**: audit → `SAFE` / `BLOCKED(n)` → wrap-up after approval → re-audit → **present** the delete command
-- **Does not**: delete the worktree · commit someone's changes · merge / rebase / push · delete or move files · close an issue as `not planned`
+- **Agent-deletion exception**: if the project policy explicitly says the agent deletes a `SAFE` worktree, run that delete command instead of presenting it — under every condition in `audit-rules.md` §7.1. No such policy → present only
+- **Does not**: delete the worktree (outside the exception above) · commit someone's changes · merge / rebase / push · delete or move files · close an issue as `not planned`
 - Target is the main worktree → stop.
 - If the human chooses to **merge** an unmerged branch, finish step 5 (wrap-up) **first**, then hand off — to `superpowers:finishing-a-development-branch` if installed, otherwise present the merge commands.
 
@@ -35,7 +36,7 @@ Never copy a project's completion commands into your report as if they were this
 4. **Report + ask for approval** — each finding as `what is lost → where it is → one-line fix`
 5. **Do the approved wrap-up** — preservation is **copy only**
 6. **Re-audit** — mechanical items only
-7. **End** — `SAFE` (present delete command) · `BLOCKED(n)` (no command) · `HANDOFF` · `ABORT`
+7. **End** — `SAFE` (present delete command) · `DELETED` (agent-deletion exception) · `BLOCKED(n)` (no command) · `HANDOFF` · `ABORT`
 
 ## Traps
 

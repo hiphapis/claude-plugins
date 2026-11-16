@@ -271,14 +271,15 @@ Choosing "merge" in §3.2 does **not** hand off at step 4. Step 5 is the only st
 
 | State | When | Output |
 | --- | --- | --- |
-| `SAFE` | 0 BLOCKED · all 🟡 passed by the human | Present the delete command — `orca worktree rm --worktree path:<p>` (Orca) or `git worktree remove <path>` (git). **Never `--force`. The human runs it** |
+| `SAFE` | 0 BLOCKED · all 🟡 passed by the human | Present the delete command — `orca worktree rm --worktree path:<p>` (Orca) or `git worktree remove <path>` (git). **Never `--force`. The human runs it**, unless §7.1 applies |
+| `DELETED` | `SAFE` and every §7.1 condition holds | The command run, where the permission came from, and the post-delete check |
 | `BLOCKED(n)` | Unresolved BLOCKED remain | Remaining items and why. **No delete command** |
 | `HANDOFF` | "Merge" chosen | After step 5: the hand-off, plus anything that couldn't be done before the merge |
 | `ABORT` | Target unresolved · main worktree · required tool failed in a way that prevents auditing | Where and why |
 
 ## 7. Safety contract
 
-1. Never delete the worktree. Present the command only.
+1. Never delete the worktree. Present the command only — the single exception is §7.1.
 2. Never commit uncommitted changes on the human's behalf.
 3. Never merge, rebase or push. Present push commands only.
 4. Never delete or move files. Preserve by **copying**.
@@ -286,6 +287,18 @@ Choosing "merge" in §3.2 does **not** hand off at step 4. Step 5 is the only st
 6. Never report a failed check as OK.
 
 Read-only audit + minimal writes after approval: even a wrong audit can't be destructive.
+
+### 7.1 Agent-deletion exception
+
+Some projects want the agent to finish the job (e.g. "after a merge, run the teardown audit; if SAFE, the agent deletes it with `orca worktree rm`"). The agent runs the delete command itself only when **all** of these hold:
+
+1. **Explicit permission in project policy** — `## Agent deletion` in `.claude/worktree-teardown.md` says `allowed`, or the project's `CLAUDE.md` / `AGENTS.md` / `CONTRIBUTING.md` explicitly says the agent deletes the worktree when the audit is SAFE. A rule that only says "run the audit" or "clean up worktrees" is not permission. Cite the file and line in the report.
+2. **`SAFE` from this run's re-audit** (step 6) — not a verdict from an earlier run, and not `BLOCKED(n)` with items "about to be fixed".
+3. **Target is not the main worktree, not locked** (`locked` in `git worktree list --porcelain` → keep it, present nothing), and the current shell is not inside it.
+4. **Exactly the §6 command** — `orca worktree rm --worktree path:<p>` for Orca-managed, `git worktree remove <path>` otherwise. If the policy names one command (e.g. Orca only), use only that. Never `--force`, `rm -rf`, `git branch -D`, or `git worktree prune`.
+5. **On failure, stop** — do not retry with other flags or tools. Report the error and fall back to presenting the command (`SAFE`).
+
+After deleting, confirm the path is gone from `git worktree list --porcelain` (and `orca worktree list --json` for Orca) and report `DELETED`.
 
 ## 8. Adding a new audit item
 

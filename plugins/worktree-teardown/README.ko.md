@@ -10,7 +10,7 @@ git 워크트리를 **지우기 전에** 감사해서, 지워도 아무것도 �
 - **빠뜨린 마무리**: 이슈가 아직 "진행 중"이고, 워크스페이스 상태도 그대로이고, 문서도 갱신하지 않음
 - **낡은 기록**: 실제로는 병합했는데 노트에는 "미병합"으로 남아 있거나, 그 반대
 
-스킬은 감사 항목 11종을 훑어 항목마다 등급을 매기고, 승인받은 마무리를 수행한 뒤 다시 감사합니다. 그다음에야 삭제 명령을 **보여줍니다**. 삭제는 스킬이 직접 하지 않습니다.
+스킬은 감사 항목 11종을 훑어 항목마다 등급을 매기고, 승인받은 마무리를 수행한 뒤 다시 감사합니다. 그다음에야 삭제 명령을 **보여줍니다**. 프로젝트 정책이 명시적으로 허용할 때(`## Agent deletion: allowed`)만 스킬이 직접 삭제합니다.
 
 ## 설치
 
@@ -55,7 +55,7 @@ cp -r claude-plugins/plugins/worktree-teardown/skills/worktree-teardown ~/.claud
 
 등급은 🔴 BLOCKED · 🟡 확인 필요 · ✓ 정상 · **N/A** 네 가지입니다. N/A는 프로젝트가 쓰지 않는 도구(Orca 없음, GitHub 아닌 원격)라는 뜻이고 삭제를 막지 않습니다. 쓰는 도구인데 호출이 실패하면 🟡 입니다. 확인하지 못한 항목을 정상으로 치지 않습니다.
 
-종료 상태: `SAFE`(삭제 명령 제시) · `BLOCKED(n)` · `HANDOFF`(마무리를 끝낸 뒤 병합으로 넘김) · `ABORT`.
+종료 상태: `SAFE`(삭제 명령 제시) · `DELETED`(정책에 따라 에이전트가 삭제) · `BLOCKED(n)` · `HANDOFF`(마무리를 끝낸 뒤 병합으로 넘김) · `ABORT`.
 
 ## 요구 사항
 
@@ -70,7 +70,7 @@ cp -r claude-plugins/plugins/worktree-teardown/skills/worktree-teardown ~/.claud
 
 ## 안전 계약
 
-워크트리를 삭제하지 않음 · 대신 커밋하지 않음 · merge·rebase·push 하지 않음 · 파일을 삭제·이동하지 않음(보존은 복사로만) · 승인 없이 이슈를 닫지 않고, `not planned` 종료는 승인이 있어도 직접 하지 않음 · 실패한 점검을 정상으로 보고하지 않음.
+프로젝트 정책이 SAFE 삭제를 명시적으로 허용할 때 외에는 워크트리를 삭제하지 않음(허용돼도 `--force` 없는 기본 삭제 명령만) · 대신 커밋하지 않음 · merge·rebase·push 하지 않음 · 파일을 삭제·이동하지 않음(보존은 복사로만) · 승인 없이 이슈를 닫지 않고, `not planned` 종료는 승인이 있어도 직접 하지 않음 · 실패한 점검을 정상으로 보고하지 않음.
 
 전체 규칙은 [`skills/worktree-teardown/references/audit-rules.md`](skills/worktree-teardown/references/audit-rules.md) 에 있습니다.
 

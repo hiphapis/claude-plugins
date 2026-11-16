@@ -41,3 +41,7 @@ Follow `docs/dev/task-lifecycle.md` § "Finishing a task".
 ## Extra preserve patterns
 
 - `assets/generated/`
+
+## Agent deletion
+
+allowed — `orca worktree rm` only

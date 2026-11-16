@@ -14,7 +14,7 @@
     {
       "name": "worktree-teardown",
       "source": "./plugins/worktree-teardown",
-      "description": "Audit a git worktree before deleting it, wrap up with approval, and let the human run the delete"
+      "description": "Audit a git worktree before deleting it, wrap up with approval, and let the human run the delete (or the agent, when project policy allows)"
     },
     {
       "name": "common-rules",
