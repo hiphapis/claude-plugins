@@ -6,7 +6,7 @@
 
 룰은 오케스트레이터·워커 분담(오케스트레이터는 코드를 한 줄도 고치지 않음), Orca 워크트리, GitHub 이슈 수명주기, 테스트 게이트, Git, 완료 보고, 문서 관리를 다룹니다. [`references/rules.md`](skills/common-rules/references/rules.md)에 룰마다 ID·별점·이유·전제 태그(`[gh]`, `[vault]`, `[ko]`, `[personal]`)를 달아 두었습니다. Orca 위에서 오케스트레이터·워커로 일하는 방식을 전제로 하므로, Orca 룰은 모든 리포에 들어갑니다.
 
-**현재 버전: 0.10.0** (룰 카탈로그 v10, 2026-11-11). 플러그인 버전 `0.N.0`은 늘 룰 카탈로그 버전 `vN`과 같습니다. 버전별 변경은 [`rules.md`](skills/common-rules/references/rules.md) 끝의 「변경 이력」에 있습니다.
+**현재 버전: 0.11.0** (룰 카탈로그 v11, 2026-11-16). 플러그인 버전 `0.N.0`은 늘 룰 카탈로그 버전 `vN`과 같습니다. 버전별 변경은 [`rules.md`](skills/common-rules/references/rules.md) 끝의 「변경 이력」에 있습니다.
 
 ## 설치 전에 알아 두세요
 
