@@ -1,6 +1,6 @@
 # 공통 룰 카탈로그
 
-- 버전: **v11** (2026-11-16). 버전별 변경은 파일 끝 「변경 이력」에 있다.
+- 버전: **v12** (2026-11-17). 버전별 변경은 파일 끝 「변경 이력」에 있다.
 - 형식: `### <ID> <제목> <별점> <전제 태그>` 다음에 **룰**과 **이유**를 적는다. 별점은 모든 프로젝트에 기본으로 깔 가치를 나타낸다(★5가 가장 높음).
 - **Orca 사용이 기본 전제다.** 이 룰은 Orca 위에서 오케스트레이터·워커로 일하는 방식을 기준으로 정했으므로, Orca 룰은 태그 없이 모든 리포에 들어간다.
 - 전제 태그: `[gh]` GitHub 이슈 사용 · `[vault]` `docs/` 문서 체계 · `[ko]` 한국어 문서 · `[personal]` 개인 선호. 태그가 없으면 모든 리포에 해당한다.
@@ -10,9 +10,9 @@
 
   | 도구 | 확인 | 설치 | 기대는 룰 |
   |---|---|---|---|
-  | Orca (`orca` CLI) | `command -v orca` | 안내만: 데스크톱 앱 <https://github.com/stablyai/orca> | 카탈로그 전체의 전제. 직접 쓰는 룰: R-ORCA 전부, R-ROLE-06~08·10·11, R-SPEC-05~08, R-ISSUE-06·07, R-DOC-11 |
+  | Orca (`orca` CLI) | `command -v orca` | 안내만: 데스크톱 앱 <https://github.com/stablyai/orca> | 카탈로그 전체의 전제. 직접 쓰는 룰: R-ORCA 전부, R-ROLE-06~08·10·11, R-SPEC-05~08, R-ISSUE-06·07·09, R-DOC-11 |
   | `gh` CLI | `command -v gh` | `brew install gh` → 사용자가 `gh auth login` | `[gh]` 룰 |
-  | worktree-teardown 플러그인 | 세션 스킬 목록에 `worktree-teardown:worktree-teardown` | `claude plugin install worktree-teardown@hiphapis` → 세션 재시작 | R-ORCA-12, R-ISSUE-07(감사 부분) |
+  | worktree-teardown 플러그인 | 세션 스킬 목록에 `worktree-teardown:worktree-teardown` | `claude plugin install worktree-teardown@hiphapis` → 세션 재시작 | R-ORCA-12, R-ISSUE-07(감사 부분), R-ISSUE-09(해제 시점) |
   | oh-my-claudecode `ccg` | 세션 스킬 목록에 `oh-my-claudecode:ccg`, `command -v codex`·`command -v gemini` | `claude plugin install oh-my-claudecode --marketplace Yeachan-Heo/oh-my-claudecode` → 세션 재시작. Codex·Gemini CLI는 안내만 | R-ROLE-09 |
   | `ego-browser` 스킬 | 세션 스킬 목록에 `ego-browser` | 안내만: ego 앱이 함께 설치함 | R-BASE-05 |
 - R-ROLE-04의 모델·effort는 리포가 채울 값이 아니라 **의도적으로 내장한 현재값**이다. 바뀌면 이 파일만 고치고 버전을 올린다.
@@ -268,8 +268,8 @@
 - 룰: 오래 산 워크트리에 main을 병합한 직후에는 의존성 설치와 코드 생성·마이그레이션부터 돌린다.
 - 이유: 안 하면 `Cannot find module`이 무더기로 떠서 우리 변경이 깨진 것처럼 보인다.
 
-### R-ORCA-12 머지 직후 teardown 감사 ★★★★★ [outward]
-- 룰: 브랜치를 머지하고 워커를 해제할 때마다 `/worktree-teardown:worktree-teardown` 감사를 돌린다. SAFE면 에이전트가 `orca worktree rm`으로 지운다(`--force`, `git worktree remove`, `rm -rf`는 쓰지 않음). BLOCKED면 지적된 항목을 처리하고 다시 감사한다. 이슈가 아직 열려 있어 BLOCKED면 이슈를 닫은 뒤 다시 감사한다. 보존할 워크트리에는 `git worktree lock`을 건다.
+### R-ORCA-12 머지 직후 teardown 감사 ★★★★★ [outward] (v12 변경)
+- 룰: 브랜치를 머지하고 워커를 해제할 때마다 `/worktree-teardown:worktree-teardown` 감사를 돌린다. SAFE면 워크스페이스에 연결된 이슈를 먼저 떼고(R-ISSUE-09) 에이전트가 `orca worktree rm`으로 지운다(`--force`, `git worktree remove`, `rm -rf`는 쓰지 않음). BLOCKED면 지적된 항목을 처리하고 다시 감사한다. 이슈가 아직 열려 있어 BLOCKED면 이슈를 닫은 뒤 다시 감사한다. 보존할 워크트리에는 `git worktree lock`을 건다.
 - 이유: 재생성할 수 없는 산출물(`.omc/` 등)이 사라지거나 Orca 상태가 어긋나는 걸 막고, 사용자가 손으로 지우는 일을 없앤다.
 
 ### R-ORCA-13 브랜치 보존·폐기는 사유를 기록 ★★★
@@ -306,13 +306,21 @@
 - 룰: 재현·구현·검증·차단처럼 의미 있는 상태 변화가 생기면 `orca worktree set --comment`로 갱신한다.
 - 이유: 사이드바에서 진행 상황이 보인다.
 
-### R-ISSUE-07 완료 순서 ★★★★★ [gh] [outward]
-- 룰: ① 이슈에 변경·검증·남은 위험 코멘트 → ② 문서 정본 반영 → ③ 제목을 ✅로 바꾸고 `in progress` 제거 → ④ 이슈 닫기, Orca 워크트리 `completed` → ⑤ teardown 감사. ①이나 ②를 빠뜨리면 완료로 보고하지 않는다.
+### R-ISSUE-07 완료 순서 ★★★★★ [gh] [outward] (v12 변경)
+- 룰: ① 이슈에 변경·검증·남은 위험 코멘트 → ② 문서 정본 반영 → ③ 제목을 ✅로 바꾸고 `in progress` 제거 → ④ 이슈 닫기, Orca 워크트리 `completed` → ⑤ teardown 감사 → ⑥ 마지막 감사가 SAFE로 끝난 직후 워크스페이스에서 이슈 연결 해제(R-ISSUE-09), 그다음 `orca worktree rm`(R-ORCA-12). ①이나 ②를 빠뜨리면 완료로 보고하지 않는다.
 - 이유: 닫힌 이슈만 봐도 무엇이 어떻게 검증됐는지 남는다.
 
 ### R-ISSUE-08 이슈는 에이전트가 닫는다 ★★★★ [gh] [outward]
 - 룰: 완료 기준(main 머지, 게이트 green, 독립 검증, 배포가 기준이면 프로덕션 확인)을 채우면 에이전트가 사용자 승인을 기다리지 않고 닫고, 머지 해시와 게이트 수치를 코멘트로 남긴다. 후속 요청이 남아 있으면 그것까지 끝낸 뒤 닫는다. 취소(❌)는 사용자가 정한다.
 - 이유: `in review`에 쌓아 두고 기다리는 일을 없앤다.
+
+### R-ISSUE-09 진행 중인 이슈는 워크스페이스에 연결한다 ★★★★ [gh] (v12 추가)
+- 룰: 이슈 작업을 시작하면(R-ISSUE-04에서 🚧로 바꿀 때) 그 이슈를 진행하는 Orca 워크스페이스의 세부정보 「연결된 작업」에 이슈를 추가한다. 작업이 끝나면 뗀다. R-ISSUE-02 예외처럼 이슈 없이 하는 작업에는 적용하지 않는다.
+  - 이슈 URL은 `gh issue view <번호> --json url -q .url`로 얻는다. selector는 지금 워크스페이스면 `active`, 다른 워크스페이스면 `path:`를 쓴다(`name:`은 표시 이름이라 쓰지 않는다).
+  - 추가: `orca reference add <이슈 URL> --worktree <selector>`. 워크트리를 새로 만들면서 시작하면 `orca worktree create --reference <이슈 URL>`로 바로 붙여도 된다(`--issue`와 함께 쓸 수 없다). 붙인 뒤 `orca reference list --worktree <selector>`로 확인한다. GitHub 이슈 URL을 붙이면 워크스페이스의 `linkedIssue`도 채워진다.
+  - 해제: `orca reference remove <이슈 URL> --worktree <selector>`. 이슈를 완료(✅)나 취소(❌)로 닫은 뒤, 마지막 teardown 감사가 SAFE로 끝난 직후 `orca worktree rm` 전에 한 번 뗀다. 감사가 `linkedIssue`로 이슈 상태를 확인하므로 먼저 떼면 "unlinked"로 잡힌다. BLOCKED로 다시 감사해야 하면 SAFE가 나올 때까지 떼지 않는다. 없는 연결을 지워도 성공하므로 뗀 뒤 `orca reference list`로 비었는지 확인한다.
+  - 워크스페이스를 지우지 않는 경우(보존 lock, 폴더 워크스페이스)에는 마지막 감사 뒤에 뗀다. 같은 워크스페이스에서 다른 이슈로 넘어가면 이전 이슈의 완료 순서(R-ISSUE-07)를 끝내고 뗀 뒤 새 이슈를 붙인다.
+- 이유: 워크스페이스 세부정보만 보고도 지금 어떤 이슈를 진행 중인지 알 수 있다. 끝난 이슈가 연결된 채 남으면 아직 진행 중인 것처럼 보인다.
 
 ## 6. 테스트·게이트
 
@@ -478,6 +486,7 @@
 
 룰 대조 대상이 아니다. 왜 바뀌었는지만 적는다.
 
+- v12 (2026-11-17): R-ISSUE-09 추가, R-ISSUE-07·R-ORCA-12 변경. 작업을 시작하면 진행하는 GitHub 이슈를 Orca 워크스페이스의 「연결된 작업」에 붙이고, 끝나면 떼는 룰이 없어 워크스페이스만 보고는 진행 중인 이슈를 알 수 없었다. `orca reference add`로 GitHub 이슈를 붙이면 teardown 감사가 읽는 `linkedIssue`도 채워지는 것을 실측했으므로, 해제는 마지막 감사가 SAFE로 끝난 직후 `orca worktree rm` 전에 한다.
 - v11 (2026-11-16): R-ROLE-07·R-ORCA-16·R-DOC-10 변경, R-DOC-11 추가. 문서는 계속 오케스트레이터가 직접 고치되, 에이전트가 따르는 규칙 문서만 끝내기 전에 맥락 없는 검토를 받는다. v9 초안의 독립 검토에서 주요 지적 9건이 나왔다. 문서 전용 변경에 R-SPEC-08·R-DOC-10이 적용되지 않는다는 점도 명시했다.
 - v10 (2026-11-11): R-BASE-12 추가. R-BASE-11은 더 나은 방안을 제안하라는 룰이라, 사용자가 말한 사실이나 전제가 틀렸을 때 근거를 들어 바로잡으라는 요구와 근거 없는 재지시에 입장을 바꾸지 말라는 기준이 없었다. R-BASE-11을 고치면 이미 적용한 리포에서 다시 대조해야 하므로 새 룰로 분리했다.
 - v9 (2026-11-10): R-SPEC-01·R-ROLE-08·R-ORCA-09 변경, R-SPEC-08·R-ORCA-16·R-ROLE-11·R-TEST-10·R-DOC-10 추가. 사고가 아니라 `google/elephant-goldfish-model`과 비교해 찾은 빈 곳(스펙 독립 검토, 리뷰 지적 분류, 재리뷰 수렴, 리뷰어 무응답)을 메웠다. "세 번째 반려에서 사용자에게 묻는다"는 R-ROLE-04에 맞춰 임의로 정한 값이다.

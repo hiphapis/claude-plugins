@@ -6,7 +6,7 @@ A Claude Code skill that merges my personal set of agent working rules into **th
 
 The rules cover the orchestrator/worker split (the orchestrator never edits code — not even one line), Orca worktrees, the GitHub issue lifecycle, test gates, git, completion reports, and docs. They live in [`references/rules.md`](skills/common-rules/references/rules.md), each with an ID, a star rating, a reason, and prerequisite tags (`[gh]`, `[vault]`, `[ko]`, `[personal]`). The rules themselves are written in Korean. They assume you run an orchestrator and workers on Orca, so the Orca rules go into every repo.
 
-**Current version: 0.11.0** (rules catalog v11, 2026-11-16). The plugin version `0.N.0` always matches the rules catalog version `vN`. See the change history at the end of [`rules.md`](skills/common-rules/references/rules.md).
+**Current version: 0.12.0** (rules catalog v12, 2026-11-17). The plugin version `0.N.0` always matches the rules catalog version `vN`. See the change history at the end of [`rules.md`](skills/common-rules/references/rules.md).
 
 ## Before you install
 
