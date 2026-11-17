@@ -44,4 +44,4 @@ Follow `docs/dev/task-lifecycle.md` § "Finishing a task".
 
 ## Agent deletion
 
-allowed — `orca worktree rm` only
+allowed — `orca worktree rm` only (with the §6 flags, incl. `--delete-branch`)

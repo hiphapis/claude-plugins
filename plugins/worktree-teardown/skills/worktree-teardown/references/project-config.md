@@ -15,7 +15,7 @@ See [`../../../examples/worktree-teardown.md`](../../../examples/worktree-teardo
 | `## Record files` | §3.2, §3.7 | Where branch status / keep-discard reasons are recorded and grepped |
 | `## Extra skip patterns` | §3.4 | Project-specific regenerable ignored paths |
 | `## Extra preserve patterns` | §3.4 | Project-specific ignored paths that must never vanish |
-| `## Agent deletion` | §6, §7.1 | `allowed` lets the agent run the delete command on `SAFE`; optionally name the only command to use. Absent or anything else → the human deletes |
+| `## Agent deletion` | §6, §7.1 | `allowed` lets the agent run the delete command on `SAFE`; optionally restrict the tool (the §6 flags, incl. `--delete-branch`, still apply) or say to keep branches (drops `--delete-branch`). Absent or anything else → the human deletes |
 
 Rules:
 

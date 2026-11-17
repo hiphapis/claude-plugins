@@ -12,6 +12,8 @@ Deleting a worktree rarely loses *commits* — git refuses to remove a dirty wor
 
 **Don't assume what the delete command does.** Whether it deletes the branch or uses `--force` varies by tool and UI. If commits are unpushed or unmerged, it is BLOCKED regardless.
 
+Orca specifics: newer hosts keep the local branch on `orca worktree rm`. `--delete-branch` attempts a **safe** deletion — Orca deletes the branch only if it can prove it is merged, and keeps it otherwise (a squash or cherry-pick merge may not be provable). Older hosts ignore `--delete-branch`, keep their own branch policy and print a warning. So the branch's fate is confirmed only by checking afterwards (§7.1), never by the command alone.
+
 ## 1. Resolve the target
 
 **Orca-managed** (the `orca` CLI exists and the path appears in `orca worktree list --json`):
@@ -102,7 +104,7 @@ Truly unmerged → **ask the human to choose**:
 | Choice | What the skill does |
 | --- | --- |
 | **Merge** | **Run step 5 (wrap-up) first** — issue, records and docs don't depend on the merge. Then hand off (`superpowers:finishing-a-development-branch` if installed, else present merge commands) and end as `HANDOFF`. Ask them to re-run the audit after merging |
-| **Keep** | Keep the branch, delete only the worktree. Record the reason and the resume trigger (issue comment + the project's status record) |
+| **Keep** | Keep the branch, delete only the worktree — the Orca delete command **omits** `--delete-branch` (§6). Record the reason and the resume trigger (issue comment + the project's status record) |
 | **Discard** | Record the reason. **Present** — don't run — the `not planned` close and branch deletion |
 
 For Keep and Discard, **the record is the completion condition.** Branches that vanish without a record cause duplicate work.
@@ -271,7 +273,7 @@ Choosing "merge" in §3.2 does **not** hand off at step 4. Step 5 is the only st
 
 | State | When | Output |
 | --- | --- | --- |
-| `SAFE` | 0 BLOCKED · all 🟡 passed by the human | Present the delete command — `orca worktree rm --worktree path:<p>` (Orca) or `git worktree remove <path>` (git). **Never `--force`. The human runs it**, unless §7.1 applies |
+| `SAFE` | 0 BLOCKED · all 🟡 passed by the human | Present the delete command — `orca worktree rm --worktree path:<p> --delete-branch` (Orca; drop `--delete-branch` when §3.2 chose Keep or Discard — a discarded branch's deletion is presented, not run) or `git worktree remove <path>` (git). **Never `--force`. The human runs it**, unless §7.1 applies |
 | `DELETED` | `SAFE` and every §7.1 condition holds | The command run, where the permission came from, and the post-delete check |
 | `BLOCKED(n)` | Unresolved BLOCKED remain | Remaining items and why. **No delete command** |
 | `HANDOFF` | "Merge" chosen | After step 5: the hand-off, plus anything that couldn't be done before the merge |
@@ -295,10 +297,10 @@ Some projects want the agent to finish the job (e.g. "after a merge, run the tea
 1. **Explicit permission in project policy** — `## Agent deletion` in `.claude/worktree-teardown.md` says `allowed`, or the project's `CLAUDE.md` / `AGENTS.md` / `CONTRIBUTING.md` explicitly says the agent deletes the worktree when the audit is SAFE. A rule that only says "run the audit" or "clean up worktrees" is not permission. Cite the file and line in the report.
 2. **`SAFE` from this run's re-audit** (step 6) — not a verdict from an earlier run, and not `BLOCKED(n)` with items "about to be fixed".
 3. **Target is not the main worktree, not locked** (`locked` in `git worktree list --porcelain` → keep it, present nothing), and the current shell is not inside it.
-4. **Exactly the §6 command** — `orca worktree rm --worktree path:<p>` for Orca-managed, `git worktree remove <path>` otherwise. If the policy names one command (e.g. Orca only), use only that. Never `--force`, `rm -rf`, `git branch -D`, or `git worktree prune`.
+4. **Exactly the §6 command** — `orca worktree rm --worktree path:<p> --delete-branch` for Orca-managed (no `--delete-branch` after Keep or Discard), `git worktree remove <path>` otherwise. A policy may restrict which tool is used (e.g. "`orca worktree rm` only"); the §6 flags still apply, and `--delete-branch` is dropped only if the policy explicitly says to keep branches. Never `--force`, `rm -rf`, `git branch -d`/`-D`, or `git worktree prune`. Before deleting, note the branch name from §1 (Orca `branch` without `refs/heads/`; detached HEAD → no branch, skip the branch check). If the host rejects `--delete-branch` as unknown, that is a failure under step 5 — do not retry without it.
 5. **On failure, stop** — do not retry with other flags or tools. Report the error and fall back to presenting the command (`SAFE`).
 
-After deleting, confirm the path is gone from `git worktree list --porcelain` (and `orca worktree list --json` for Orca) and report `DELETED`.
+After deleting, confirm the path is gone from `git worktree list --porcelain` (and `orca worktree list --json` for Orca) and report `DELETED`. With `--delete-branch`, also run `git -C <main> show-ref --verify --quiet refs/heads/<branch>`: non-zero exit → report "branch deleted"; zero (still there) → report "branch retained" with the likely reason (Orca could not prove it merged — e.g. squash/cherry-pick merge — or an older-host warning was printed). A retained branch is not a failure of the deletion: **do not** retry with `git branch -d/-D` or other flags; leave it to the human.
 
 ## 8. Adding a new audit item
 

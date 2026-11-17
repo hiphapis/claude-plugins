@@ -70,7 +70,7 @@ Labels, completion steps, which docs are canonical and which are history: these 
 
 ## Safety contract
 
-Never deletes the worktree unless project policy explicitly allows it on `SAFE` (and then only with the plain delete command, never `--force`) · never commits for you · never merges, rebases or pushes · never deletes or moves files (preserves by copying) · never closes an issue without approval, and never closes one as `not planned` · never reports a failed check as OK.
+Never deletes the worktree unless project policy explicitly allows it on `SAFE` (and then only with the plain delete command — on Orca with `--delete-branch`, which removes the local branch only if Orca can prove it merged — never `--force`) · never commits for you · never merges, rebases or pushes · never deletes or moves files (preserves by copying) · never closes an issue without approval, and never closes one as `not planned` · never reports a failed check as OK.
 
 The full rulebook is [`skills/worktree-teardown/references/audit-rules.md`](skills/worktree-teardown/references/audit-rules.md).
 

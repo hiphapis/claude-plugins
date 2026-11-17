@@ -70,7 +70,7 @@ cp -r claude-plugins/plugins/worktree-teardown/skills/worktree-teardown ~/.claud
 
 ## 안전 계약
 
-프로젝트 정책이 SAFE 삭제를 명시적으로 허용할 때 외에는 워크트리를 삭제하지 않음(허용돼도 `--force` 없는 기본 삭제 명령만) · 대신 커밋하지 않음 · merge·rebase·push 하지 않음 · 파일을 삭제·이동하지 않음(보존은 복사로만) · 승인 없이 이슈를 닫지 않고, `not planned` 종료는 승인이 있어도 직접 하지 않음 · 실패한 점검을 정상으로 보고하지 않음.
+프로젝트 정책이 SAFE 삭제를 명시적으로 허용할 때 외에는 워크트리를 삭제하지 않음(허용돼도 `--force` 없는 기본 삭제 명령만. Orca에서는 `--delete-branch`를 붙여 Orca가 머지를 확인한 로컬 브랜치만 함께 지움) · 대신 커밋하지 않음 · merge·rebase·push 하지 않음 · 파일을 삭제·이동하지 않음(보존은 복사로만) · 승인 없이 이슈를 닫지 않고, `not planned` 종료는 승인이 있어도 직접 하지 않음 · 실패한 점검을 정상으로 보고하지 않음.
 
 전체 규칙은 [`skills/worktree-teardown/references/audit-rules.md`](skills/worktree-teardown/references/audit-rules.md) 에 있습니다.
 
