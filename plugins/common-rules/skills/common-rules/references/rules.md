@@ -1,6 +1,6 @@
 # 공통 룰 카탈로그
 
-- 버전: **v13** (2026-11-17). 버전별 변경은 파일 끝 「변경 이력」에 있다.
+- 버전: **v14** (2026-11-17). 버전별 변경은 파일 끝 「변경 이력」에 있다.
 - 형식: `### <ID> <제목> <별점> <전제 태그>` 다음에 **룰**과 **이유**를 적는다. 별점은 모든 프로젝트에 기본으로 깔 가치를 나타낸다(★5가 가장 높음).
 - **Orca 사용이 기본 전제다.** 이 룰은 Orca 위에서 오케스트레이터·워커로 일하는 방식을 기준으로 정했으므로, Orca 룰은 태그 없이 모든 리포에 들어간다.
 - 전제 태그: `[gh]` GitHub 이슈 사용 · `[vault]` `docs/` 문서 체계 · `[ko]` 한국어 문서 · `[personal]` 개인 선호. 태그가 없으면 모든 리포에 해당한다.
@@ -229,12 +229,12 @@
 - 룰: 독립 태스크는 모두 만들고 모두 start한 뒤에 기다린다. `check --wait`는 Run당 하나만 걸고, 대기 프로세스를 kill하지 않는다. 타임아웃이나 `{count:0}`은 실패가 아니라 체크포인트다(코딩은 15～60분이 정상). heartbeat 배달은 ack한 뒤 다시 기다린다.
 - 이유: 순차 대기로 시간을 버리지 않고, kill로 생기는 `waiter_exists` 잠김을 피한다.
 
-### R-ORCA-15 워커 완료를 놓치지 않게 대기를 건다 ★★★★★ (v4 추가)
+### R-ORCA-15 워커 완료를 놓치지 않게 대기를 건다 ★★★★★ (v14 변경)
 - 룰: 워커가 끝났다는 사실은 오케스트레이터에게 저절로 오지 않는다. 오케스트레이터는 사용자 메시지가 오거나 자기가 건 백그라운드 명령이 끝날 때만 다시 깨어난다. 그래서 결과를 받아야 하는 워커에는 늘 대기를 걸어 둔다.
   - 결과를 받아 게이트 재실행·리뷰·머지를 해야 하는 작업은 R-ROLE-05 기준대로 supervised(`check --wait`)로 띄운다.
   - full handoff(`orca worktree create --prompt`)로 띄웠는데 결과를 받아야 하면, 띄운 같은 턴에 워커 터미널마다 대기를 백그라운드로 건다. 워커가 프롬프트를 받기 전에 대기가 바로 끝나지 않게 짧게 지연한 뒤 시작한다. 예: `sleep 20 && orca terminal wait --terminal <handle> --for tui-idle --timeout-ms 3600000`를 `run_in_background`로 실행.
   - 대기가 끝나면 곧바로 `git log main..HEAD`와 `orca terminal read` 출력으로 완료를 확인한다. `tui-idle`은 `status: running`으로도 끝날 수 있으니 대기가 끝난 것만으로 완료로 보지 않는다. 아직 일하는 중이면 다시 건다.
-  - `orca terminal send`로 후속 지시(리뷰 반영 등)를 보냈으면 같은 턴에 대기를 다시 건다.
+  - 후속 지시(리뷰 반영 등)를 보냈으면 같은 턴에 대기를 다시 건다. full handoff 워커는 `orca terminal send`로, supervised 워커는 `orca orchestration send`로 보낸다(R-ORCA-10).
   - 대화 요약이나 세션 재개 직후에는 대기가 사라졌다고 보고, 진행 중인 워커마다 대기를 다시 건다. supervised에서 `waiter_exists`가 나오면 이전 대기가 아직 살아 있다는 뜻이므로 kill하지 않는다(R-ORCA-08). 그 대기가 이 세션의 백그라운드 작업에 없으면(세션 재개) 사용자에게 알린다.
   - "진행 중"이라고 보고만 하고 대기 없이 턴을 끝내지 않는다.
 - 이유: 워커 둘이 끝났는데 대기가 걸려 있지 않아, 사용자가 지적할 때까지 오케스트레이터가 아무것도 하지 않은 적이 있다. 결과가 필요한 작업을 완료 신호가 없는 full handoff로 띄웠고, 대화가 요약되면서 대기 맥락도 사라졌다.
@@ -260,9 +260,16 @@
   - 분류 결과 수정이 0건이면 반려 횟수(R-ROLE-04)에 세지 않는다.
 - 이유: 리뷰 지적이 늘 맞지는 않다. 그대로 넘기면 틀린 지적 때문에 맞는 코드를 고치게 되고, 오케스트레이터가 걸러 내면 근거 없이 지적을 무시할 수 있다. 증거를 요구하면 두 경우를 함께 막는다. 스펙을 쓴 쪽이 반박하고 싶다는 사실은 리뷰어가 틀렸다는 증거가 아니다.
 
-### R-ORCA-10 release 전에 머지 ★★★★★
-- 룰: 순서는 리뷰 `worker_done` → 머지 → `worker-release`다. 머지하기 전에 마지막 dispatch를 release하지 않는다.
-- 이유: 마지막 소유 dispatch가 release되면 Orca가 워크트리와 브랜치를 회수한다. 실제로 브랜치를 잃은 적이 있다.
+### R-ORCA-10 구현 워커는 머지까지 열어 두고, 머지 뒤 release ★★★★★ (v14 변경)
+- 룰: supervised(`orca orchestration worker-start`)로 띄운 워커에 적용한다. 순서는 리뷰 통과 → 머지 → 열어 둔 구현 워커 release → teardown 감사(R-ORCA-12)다.
+  - 터미널 수명: 새 워크트리(`--worktree new-child`·`new-top-level`)에 띄운 워커는 끝나도 열려 있다. 기존 워크트리(`current`·`path:` 등)에 띄운 워커는 자동 release를 지원하는 Orca(`orca status --json`에 `orchestration.worker-auto-release.v1`)에서 `worker_done`을 받아들인 지 약 2분 뒤 닫힌다.
+  - 반려를 받을 수 있는 구현 워커는 머지할 때까지 열어 둔다. 기존 워크트리에 띄우는 구현 워커는 반드시 `worker-start --keep-open`으로 띄운다. 빠뜨렸으면 `worker-show`의 `autoReleaseAt`이 지나기 전에 `orca orchestration worker-keep-open --dispatch <id>`를 건다. 이미 지났으면 아래 "release된 뒤 반려"를 따른다.
+  - 반려 전달: `orca orchestration send --to dispatch:<가장 최근 dispatch id> --subject <제목> --body <분류된 반려 목록(R-ORCA-16)>`. Orca가 같은 터미널에 후속 dispatch(새 task)를 만들고, 워커는 그 dispatch로 `worker_done`을 다시 보낸다(R-SPEC-07의 "한 번만"은 dispatch마다다). 응답에 나온 새 dispatch id를 적어 두고 같은 턴에 대기를 다시 건다(R-ORCA-15). 이후 send·release는 가장 최근 dispatch id로 한다.
+  - release된 뒤 반려: 같은 워크트리(`--worktree path:<경로>`)에 `--keep-open`으로 구현 워커를 새로 띄우고, 스펙과 분류된 반려 목록을 넘긴다. 반려 횟수(R-ROLE-04)는 작업 단위로 이어서 센다.
+  - 리뷰 워커(R-ORCA-09)는 반려를 받지 않으므로 자동 release에 맡긴다.
+  - release: `orca orchestration worker-release --dispatch <가장 최근 dispatch id>`. 결과가 `retained`·`already_released`여도 실패가 아니다(exit 0). 사용자가 직접 열어 둔 터미널은 release 대상이 아니다.
+  - 자동 release를 지원하지 않거나 release 동작을 확인하지 못한 Orca 버전에서는 머지 전에 release하지 않는다.
+- 이유: Orca 1.4.261에서 실측했다. `new-child` 워커는 끝난 뒤 `retained`로 남았고, `worker-release`는 에이전트 터미널만 닫아 머지하지 않은 커밋이 있는 워크트리와 브랜치는 그대로 남았다. 끝난 워커에게 `orchestration send`를 보내면 같은 터미널에 후속 dispatch가 생겨 재작업과 두 번째 `worker_done`까지 이어졌다. 예전 Orca에서는 release가 워크트리와 브랜치를 회수해 브랜치를 잃은 적이 있다. 자동 release 때문에 열어 둘 워커를 정하지 않으면 반려를 보낼 터미널이 사라지고, 열어 둔 워커를 release하지 않으면 터미널이 쌓인다.
 
 ### R-ORCA-11 main 병합 직후 의존성부터 ★★★★
 - 룰: 오래 산 워크트리에 main을 병합한 직후에는 의존성 설치와 코드 생성·마이그레이션부터 돌린다.
@@ -279,8 +286,8 @@
 - 룰: 미병합 브랜치는 감사 전에 병합을 끝낸다. 보존하거나 폐기하는 브랜치는 사유를 기록해야 완료다.
 - 이유: 기록 없이 사라진 브랜치는 중복 구현으로 이어진다.
 
-### R-ORCA-14 세션을 닫기 전에 남은 워크트리 확인 ★★★★
-- 룰: 세션을 닫기 전에 내가 만든 워크트리가 남아 있는지 확인하고, 감사 결과(삭제 또는 BLOCKED 사유)를 완료 보고에 적는다.
+### R-ORCA-14 세션을 닫기 전에 남은 워크트리·워커 확인 ★★★★ (v14 변경)
+- 룰: 세션을 닫기 전에 내가 만든 워크트리가 남아 있는지 확인하고, 감사 결과(삭제 또는 BLOCKED 사유)를 완료 보고에 적는다. `orca orchestration worker-list --run <내 Run id>`로 내가 띄운 워커 중 터미널이 아직 열려 있는 것(`terminalState`가 `retained`·`reclaimable`)도 확인한다. 머지가 끝나 반려를 보낼 일이 없으면 release하고(R-ORCA-10), 남겨 둘 워커는 이유를 완료 보고에 적는다. `active`는 아직 일하는 중이므로 release하지 말고 대기를 건다(R-ORCA-15).
 - 이유: 사용자가 손으로 지우는 상황을 만들지 않는다.
 
 ## 5. GitHub 이슈 수명주기
@@ -309,8 +316,8 @@
 - 룰: 재현·구현·검증·차단처럼 의미 있는 상태 변화가 생기면 `orca worktree set --comment`로 갱신한다.
 - 이유: 사이드바에서 진행 상황이 보인다.
 
-### R-ISSUE-07 완료 순서 ★★★★★ [gh] [outward] (v12 변경)
-- 룰: ① 이슈에 변경·검증·남은 위험 코멘트 → ② 문서 정본 반영 → ③ 제목을 ✅로 바꾸고 `in progress` 제거 → ④ 이슈 닫기, Orca 워크트리 `completed` → ⑤ teardown 감사 → ⑥ 마지막 감사가 SAFE로 끝난 직후 워크스페이스에서 이슈 연결 해제(R-ISSUE-09), 그다음 `orca worktree rm`(R-ORCA-12). ①이나 ②를 빠뜨리면 완료로 보고하지 않는다.
+### R-ISSUE-07 완료 순서 ★★★★★ [gh] [outward] (v14 변경)
+- 룰: ① 이슈에 변경·검증·남은 위험 코멘트 → ② 문서 정본 반영 → ③ 제목을 ✅로 바꾸고 `in progress` 제거 → ④ 이슈 닫기, Orca 워크트리 `completed` → ⑤ 열어 둔 구현 워커 release(R-ORCA-10) 뒤 teardown 감사 → ⑥ 마지막 감사가 SAFE로 끝난 직후 워크스페이스에서 이슈 연결 해제(R-ISSUE-09), 그다음 `orca worktree rm`(R-ORCA-12). ①이나 ②를 빠뜨리면 완료로 보고하지 않는다.
 - 이유: 닫힌 이슈만 봐도 무엇이 어떻게 검증됐는지 남는다.
 
 ### R-ISSUE-08 이슈는 에이전트가 닫는다 ★★★★ [gh] [outward]
@@ -489,6 +496,7 @@
 
 룰 대조 대상이 아니다. 왜 바뀌었는지만 적는다.
 
+- v14 (2026-11-17): R-ORCA-10·R-ORCA-14·R-ORCA-15·R-ISSUE-07 변경. R-ORCA-10은 오케스트레이터가 release 시점을 정한다고 전제했지만, 지금 Orca는 기존 워크트리에 띄운 워커를 `worker_done` 약 2분 뒤 자동 release하고, 새 워크트리에 띄운 워커는 기본으로 열어 둔다. 그래서 반려를 받을 구현 워커가 먼저 닫히거나, 열린 워커가 쌓일 수 있었다. 1.4.261에서 release가 터미널만 닫고 워크트리·브랜치는 남기는 것과, 끝난 워커에게 `orchestration send`를 보내면 같은 터미널에 후속 dispatch가 생겨 두 번째 `worker_done`까지 오는 것을 실측해 반려 전달 수단을 정했다. 세션 종료 전에 열린 워커를 release하도록 R-ORCA-14를, supervised 후속 지시 수단을 R-ORCA-15에, release 위치를 R-ISSUE-07 ⑤에 넣었다.
 - v13 (2026-11-17): R-ORCA-12 변경. 워크트리를 지울 때 브랜치를 지우라는 룰이 없었고, 최신 Orca의 `orca worktree rm`은 기본으로 로컬 브랜치를 남겨 머지된 워커 브랜치가 쌓였다. `--delete-branch`로 Orca가 머지를 확인한 로컬 브랜치만 함께 지우고, 남은 브랜치는 우회해 지우지 않고 보고한다. worktree-teardown도 0.3.0에서 같은 삭제 명령으로 맞췄다. 원격 브랜치 정리는 리포 밖 행동이라 넣지 않았다.
 - v12 (2026-11-17): R-ISSUE-09 추가, R-ISSUE-07·R-ORCA-12 변경. 작업을 시작하면 진행하는 GitHub 이슈를 Orca 워크스페이스의 「연결된 작업」에 붙이고, 끝나면 떼는 룰이 없어 워크스페이스만 보고는 진행 중인 이슈를 알 수 없었다. `orca reference add`로 GitHub 이슈를 붙이면 teardown 감사가 읽는 `linkedIssue`도 채워지는 것을 실측했으므로, 해제는 마지막 감사가 SAFE로 끝난 직후 `orca worktree rm` 전에 한다.
 - v11 (2026-11-16): R-ROLE-07·R-ORCA-16·R-DOC-10 변경, R-DOC-11 추가. 문서는 계속 오케스트레이터가 직접 고치되, 에이전트가 따르는 규칙 문서만 끝내기 전에 맥락 없는 검토를 받는다. v9 초안의 독립 검토에서 주요 지적 9건이 나왔다. 문서 전용 변경에 R-SPEC-08·R-DOC-10이 적용되지 않는다는 점도 명시했다.
