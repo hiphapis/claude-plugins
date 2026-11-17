@@ -11,7 +11,7 @@ from collections import defaultdict
 
 import pytest
 
-from conftest import PLUGINS_DIR, load_json, read
+from conftest import PLUGINS_DIR, load_json, read, strip_code
 
 PLUGIN = PLUGINS_DIR / "common-rules"
 SKILL_DIR = PLUGIN / "skills" / "common-rules"
@@ -171,3 +171,31 @@ def test_expand_ids_handles_grouped_notation():
         "R-ROLE-06", "R-ROLE-07", "R-ROLE-08", "R-ROLE-10", "R-ROLE-11"
     }
     assert expand_ids("R-BASE-01～03·08") == {"R-BASE-01", "R-BASE-02", "R-BASE-03", "R-BASE-08"}
+
+
+# ---- 카탈로그와 다른 문서의 정합성 ----
+
+
+def test_layout_default_structure_covers_every_rule():
+    """layout.md §2 기본 구조에 자리가 없는 룰은 새 리포에서 넣을 파일이 없다(v14까지 7개가 빠져 있었다)."""
+    layout = read(SKILL_DIR / "references" / "layout.md")
+    block = re.search(r"^```\n(AGENTS\.md.*?)^```", layout, re.M | re.S)
+    assert block, "layout.md에서 기본 구조 코드블록을 찾지 못했다"
+    tree = block.group(1)
+    covered = expand_ids(tree)
+    # 'R-ROLE', 'R-GIT'처럼 번호 없이 범주 전체를 가리키는 표기
+    for cat in re.findall(r"R-([A-Z]+)\b(?!-\d)", tree):
+        covered |= {i for i in DEFINED if i.startswith(f"R-{cat}-")}
+    missing = sorted(set(DEFINED) - covered)
+    assert not missing, f"layout.md 기본 구조에 자리가 없는 룰: {missing}"
+
+
+@pytest.mark.parametrize(
+    "doc",
+    [RULES_MD, SKILL_DIR / "SKILL.md", SKILL_DIR / "references" / "layout.md", *sorted(PLUGIN.glob("README*.md"))],
+    ids=lambda p: p.name,
+)
+def test_no_ascii_tilde_outside_code(doc):
+    """R-DOC-08: 홑틸드 한 쌍은 GFM·Obsidian에서 취소선이 된다. 범위·근사는 전각 ～로 쓴다."""
+    bad = [line for line in strip_code(read(doc)).splitlines() if "~" in line]
+    assert not bad, f"코드 밖에 ASCII 틸드가 있다: {bad}"

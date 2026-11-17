@@ -6,32 +6,44 @@
 
 - 파일 이름이 달라도 주제가 같으면 그 파일이다(예: `commit-rules.md`가 R-GIT의 자리).
 - 한 기존 파일이 여러 범주를 다 담고 있으면(예: 큰 `AGENTS.md` 하나) 그 파일 안에서 주제가 맞는 절을 찾아 넣고, 맞는 절이 없으면 절을 새로 만든다.
-- 주제가 맞는 파일이 없는 범주만, 같은 폴더에 새 파일을 만든다. 파일 이름은 그 폴더의 기존 이름 규칙(언어, 케밥 케이스 등)을 따르고, 인덱스에 한 줄을 추가한다.
+- 주제가 맞는 파일이 없는 범주만, 같은 폴더에 새 파일을 만든다. 파일 이름은 그 폴더의 기존 이름 규칙(언어, 케밥 케이스 등)을 따르고, 인덱스에 한 줄을 추가한다. 인덱스에 "언제 읽는지" 같은 칸이 있으면 그 칸도 채운다.
+- R-ROLE-12(역할 판별)만은 체계가 있든 없든 진입 파일(`AGENTS.md`·`CLAUDE.md`)에 직접 넣는다. 어느 에이전트든 세션을 시작할 때 자동으로 읽는 파일은 진입 파일뿐이고, 워커는 자기 역할을 알기 전에는 규칙 문서를 열 계기가 없다. 진입 파일에 역할을 적은 절이 이미 있으면 그 절에 넣는다.
 
 ## 2. 체계가 없으면 기본 구조를 제안한다
 
 룰이 루트 `AGENTS.md`·`CLAUDE.md` 정도뿐이거나 아예 없으면 아래 구조를 제안하고, **만들기 전에 사용자에게 한 번 묻는다.** 거절하면 `AGENTS.md`(없으면 `CLAUDE.md`)에 범주별 절로 넣는다.
 
 ```
-AGENTS.md                         # 인덱스·레이아웃 규약만 (R-DOC-01)
+AGENTS.md                         # 역할 판별(R-ROLE-12), 인덱스·레이아웃 규약(R-DOC-01)
 docs/rules/
-  agent-roles.md                  # R-BASE-01～03·08, R-ROLE, R-SPEC
+  agent-roles.md                  # R-BASE-01～03·06·08·10～12, R-ROLE-01～11, R-SPEC
   task-lifecycle.md               # R-ISSUE, R-ORCA
   testing.md                      # R-TEST
   git-workflow.md                 # R-GIT
   verification-handoff.md         # R-REPORT
-  doc-maintenance.md              # R-DOC-01～06·09
+  doc-maintenance.md              # R-BASE-07, R-DOC-01～06·09～11
   writing.md                      # R-BASE-04·05·09, R-DOC-07·08
 ```
 
 - 리포가 이미 `docs/` 아래에 번호 폴더(예: `docs/06-개발규칙/`)를 쓰고 있으면 `docs/rules/` 대신 그 규칙을 따른다.
-- frontmatter는 SKILL.md 4단계 판정을 따른다. 새 구조를 만드는 리포에는 따를 관례가 없으므로 R-DOC-08대로 붙인다.
-- 각 파일 첫머리에 TL;DR 몇 줄을 두고, `AGENTS.md`의 인덱스 표에 파일마다 한 줄을 추가한다. (이 절은 새 구조를 만들 때만 적용된다. 기존 체계 안에 파일을 추가할 때는 §1대로 그 폴더의 관례를 따른다.)
+- frontmatter는 SKILL.md 4단계 판정을 따른다. 새 구조를 만드는 리포에는 따를 관례가 없으므로, R-DOC-08을 넣는 리포면 그 룰대로 붙이고 R-DOC-08이 전제에서 빠진 리포면 붙이지 않는다.
+- 각 파일 첫머리에 TL;DR 몇 줄을 두고, `AGENTS.md`의 인덱스 표에 파일마다 한 줄을 추가한다. 인덱스 표에는 문서마다 **언제 읽는지**(예: 디스패치 전, 커밋 전, 이슈를 닫기 전, 워커가 스펙을 받았을 때)를 한 칸으로 적는다. 마크다운 링크는 세션을 시작할 때 자동으로 읽히지 않으므로, 이 칸이 없으면 에이전트가 문서를 열 계기가 없다. (이 항목은 새 구조를 만들 때만 적용된다. 기존 체계 안에 파일을 추가할 때는 §1대로 그 폴더의 관례를 따른다.)
 
-## 3. CLAUDE.md와 AGENTS.md가 둘 다 있을 때
+## 3. CLAUDE.md와 AGENTS.md
 
-- 한쪽이 다른 쪽을 가리키기만 하면(예: `CLAUDE.md`가 `@AGENTS.md` 한 줄) 실제 본문이 있는 쪽에 쓴다.
-- 둘 다 본문이 있으면, 워커(Codex 등)가 읽는 `AGENTS.md`를 우선한다. Claude 전용 내용(스킬 이름, Claude Code 기능)만 `CLAUDE.md`에 둔다.
+### 둘 다 있을 때 어디에 쓰나
+
+- 한쪽이 다른 쪽을 가리키기만 하면(예: `CLAUDE.md`가 `@AGENTS.md` 한 줄이거나 `AGENTS.md`의 심볼릭 링크) 실제 본문이 있는 쪽에 쓴다.
+- 둘 다 본문이 있으면 `AGENTS.md`를 우선한다. Claude가 아닌 에이전트(Codex 등)도 읽는 파일이기 때문이다. Claude 전용 내용(스킬 이름, Claude Code 기능)만 `CLAUDE.md`에 둔다.
+
+### 쓴 룰이 읽히는지 확인한다
+
+Claude Code는 기본 설정에서 `CLAUDE.md`가 없을 때만 `AGENTS.md`를 읽는다. 작업 디렉토리나 그 위에 `CLAUDE.md`·`.claude/CLAUDE.md`·`CLAUDE.local.md` 중 하나라도 있으면 `AGENTS.md`는 건너뛴다. 그래서 이 파일들이 있는 리포에서 `AGENTS.md`(와 거기서 링크한 규칙 문서)에 룰을 넣으면, 오케스트레이터도 Orca가 띄운 Claude 워커도 그 룰을 읽지 못한다. 배치를 정할 때 다음을 확인한다.
+
+- `CLAUDE.md`나 `.claude/CLAUDE.md`가 있는데 루트 `AGENTS.md`를 import하지 않으면(그 파일을 가리키는 `@` import 줄이 없고 심볼릭 링크도 아님), import 줄을 넣을지 사용자에게 묻는다. 넣는 곳은 루트 `CLAUDE.md`의 맨 위이고 줄은 `@AGENTS.md`다. 루트에 `CLAUDE.md`가 없으면 `.claude/CLAUDE.md`의 맨 위에 넣되, import 경로는 그 줄이 든 파일의 위치를 기준으로 풀리므로 `@../AGENTS.md`로 쓴다. 기존 파일을 고치는 일이므로 묻지 않고 넣지 않는다. 사용자가 넣지 않겠다고 하면 적용 기록에 `기존 유지`로 남겨 다시 묻지 않는다. 물을 수 없으면 넣지 않고 적용 기록에 `미결정(읽힘)`으로, 보고서의 「읽히지 않는 룰」에 남긴다.
+- `CLAUDE.local.md`만 있으면 커밋되지 않는 개인 파일이라 리포에서 고칠 수 없다. 보고서의 「읽히지 않는 룰」에 적고, Claude Code의 Project instructions 설정을 `claude-md-and-agents-md`로 바꾸라고 안내한다.
+- 룰을 `CLAUDE.md`에 넣었고 `AGENTS.md`가 없으면 Claude가 아닌 에이전트는 그 룰을 읽지 못한다. 보고서의 「읽히지 않는 룰」에 한 줄 적는다.
+- Claude Code가 `AGENTS.md`를 직접 읽는 것은 2.1.277부터다. 이 머신의 `claude --version`이 그보다 낮으면 `CLAUDE.md`가 없어도 `AGENTS.md`를 읽지 못하므로, 보고서의 「읽히지 않는 룰」에 적는다.
 
 ## 4. 리포마다 값이 다른 자리
 
@@ -41,4 +53,4 @@ docs/rules/
 - 원격 리포 이름, 기본 브랜치
 - 디렉토리 레이아웃 표
 - 문서 린터 명령
-- 배포 절차
+- 배포 절차(push가 곧 배포인 리포면, 배포를 위한 push를 에이전트가 하는지도 여기에 적는다 — R-REPORT-04)

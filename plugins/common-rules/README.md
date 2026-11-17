@@ -6,7 +6,7 @@ A Claude Code skill that merges my personal set of agent working rules into **th
 
 The rules cover the orchestrator/worker split (the orchestrator never edits code — not even one line), Orca worktrees, the GitHub issue lifecycle, test gates, git, completion reports, and docs. They live in [`references/rules.md`](skills/common-rules/references/rules.md), each with an ID, a star rating, a reason, and prerequisite tags (`[gh]`, `[vault]`, `[ko]`, `[personal]`). The rules themselves are written in Korean. They assume you run an orchestrator and workers on Orca, so the Orca rules go into every repo.
 
-**Current version: 0.14.0** (rules catalog v14, 2026-11-17). The plugin version `0.N.0` always matches the rules catalog version `vN`. See the change history at the end of [`rules.md`](skills/common-rules/references/rules.md).
+**Current version: 0.15.0** (rules catalog v15, 2026-11-17). The plugin version `0.N.0` always matches the rules catalog version `vN`. See the change history at the end of [`rules.md`](skills/common-rules/references/rules.md).
 
 ## Before you install
 
@@ -17,19 +17,20 @@ The rules cover the orchestrator/worker split (the orchestrator never edits code
   - `ccg` from [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode) — three-model consensus, only for irreversible changes (R-ROLE-09)
   - the `gh` CLI — GitHub issue lifecycle (`[gh]` rules)
   - the `ego-browser` skill — browser checks (`[personal]` rules)
+  - the [humanize-korean](https://github.com/epoko77-ai/im-not-ai) plugin — polishing Korean docs (R-DOC-07, a `[ko]` rule)
 - **These are personal rules.** The rule text is in Korean, and personal preferences such as output language and browser choice are tagged `[personal]`. In a repo shared with others, you will usually want to leave `[personal]` rules out.
 - **Some rules act outside the repo.** `[outward]` rules — auto-pushing doc commits, pushing work that has already been deployed to production, closing issues automatically, deploying without asking — are confirmed with you before they go in, even when nothing in the repo's rules conflicts with them.
-- **It edits files in your repo.** It writes rules and an application record into `AGENTS.md` and `docs/` rule documents. Run it on a clean working tree and review the result with `git diff`.
+- **It edits files in your repo.** It writes rules and an application record into `AGENTS.md` and `docs/` rule documents. Run it on a clean working tree and review the result with `git diff`. It commits only when the git rules the repo already had before the run allow it. If the rules it wrote will not be loaded — a `CLAUDE.md` that does not import `AGENTS.md` — it tells you so.
 
 ## Why a merge, not a template
 
-Workers such as Codex read the repo's `AGENTS.md` and `docs/`, not Claude skills, so the rules have to land in the repo as real files. And most repos already have rules. The skill:
+An agent reads the repo's documents, not Claude skills: `AGENTS.md`/`CLAUDE.md` at session start, and the `docs/` files they point to when needed. That holds for workers launched by Orca, and other agents such as Codex cannot read Claude skills at all. So the rules have to land in the repo as real files. And most repos already have rules. The skill:
 
 1. reads every existing rule document end to end,
 2. classifies each common rule as **same / partial / missing / conflict**,
 3. adds what's missing and fills in partial rules without asking,
 4. asks you how to resolve each conflict (replace, keep the repo's rule, or adjust),
-5. records the version and your decisions in `AGENTS.md`, so the next run only looks at rules that are new or changed.
+5. records the version and your decisions in `AGENTS.md`, so the next run only looks at rules that are new or changed, plus anything left undecided.
 
 It never decides a conflict on its own. When it cannot ask (a subagent or a non-interactive run), it leaves conflicts untouched and reports them as undecided.
 
@@ -46,6 +47,8 @@ In the repo you want to update:
 
 > /common-rules
 > 이 리포에도 공통 룰 넣어줘
+
+Sentences the skill writes end with a rule-ID comment such as `<!-- R-GIT-03 -->`; sentences that were already yours get `<!-- R-GIT-03 기존 -->`. On a version upgrade, sentences without the `기존` mark are rewritten to the new rule without asking — so if you hand-edit a sentence the skill wrote, add `기존` to its comment.
 
 ## License
 
