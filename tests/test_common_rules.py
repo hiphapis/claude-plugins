@@ -1,6 +1,6 @@
 """common-rules 룰 카탈로그(rules.md)의 버전·ID 규약 검사.
 
-스킬은 재실행 때 `(vN 변경|추가)` 표시와 룰 ID 주석으로 "새로 바뀐 룰만" 다시 대조한다.
+스킬은 재실행 때 `(vN 변경|추가|삭제)` 표시와 룰 ID 주석으로 "새로 바뀐 룰만" 다시 대조한다.
 그래서 버전 표기, 변경 표시, ID 참조가 어긋나면 이미 적용한 리포에서 룰이 조용히 누락된다.
 """
 
@@ -21,7 +21,7 @@ RULES = read(RULES_MD)
 ALLOWED_TAGS = {"gh", "vault", "ko", "personal", "outward"}
 HEADING = re.compile(
     r"^### (?P<id>R-(?P<cat>[A-Z]+)-(?P<num>\d{2})) (?P<title>.+?) (?P<stars>★{1,5})"
-    r"(?P<tags>(?: \[[a-z]+\])*)(?: \(v(?P<ver>\d+) (?P<kind>변경|추가)\))?$"
+    r"(?P<tags>(?: \[[a-z]+\])*)(?: \(v(?P<ver>\d+) (?P<kind>변경|추가|삭제)\))?$"
 )
 # R-ROLE-06~08·10·11, R-BASE-01～03·08 같은 묶음 표기도 개별 ID로 풀어낸다
 ID_GROUP = re.compile(r"R-([A-Z]+)-(\d{2})((?:[~～·]\d{2})*)")
@@ -50,11 +50,14 @@ def expand_ids(text: str) -> set[str]:
 
 
 DEFINED = [m.group("id") for m in _rule_headings() if m]
+DELETED = {m.group("id") for m in _rule_headings() if m and m.group("kind") == "삭제"}
+LIVE = set(DEFINED) - DELETED
+EVALS_DIR = SKILL_DIR / "evals"
 
 
 def test_every_rule_heading_follows_format():
     bad = [l for l in RULES.splitlines() if l.startswith("### R-") and not HEADING.match(l)]
-    assert not bad, f"형식(### ID 제목 ★ [태그] (vN 변경|추가))을 벗어난 헤딩: {bad}"
+    assert not bad, f"형식(### ID 제목 ★ [태그] (vN 변경|추가|삭제))을 벗어난 헤딩: {bad}"
 
 
 def test_rule_ids_are_unique():
@@ -154,7 +157,17 @@ def _id_reference_sources():
 
 @pytest.mark.parametrize("src", sorted(set(_id_reference_sources())), ids=lambda p: str(p.relative_to(PLUGIN)))
 def test_referenced_rule_ids_exist(src):
-    unknown = sorted(expand_ids(read(src)) - set(DEFINED))
+    text = read(src)
+    if src == RULES_MD:
+        # 변경 이력은 삭제된 룰도 적는다. 삭제된 룰의 헤딩은 정의 자체라 참조로 세지 않는다.
+        body, history = text.split("## 변경 이력", 1)
+        body = "\n".join(l for l in body.splitlines() if not l.startswith("### R-"))
+        unknown = sorted((expand_ids(body) - LIVE) | (expand_ids(history) - set(DEFINED)))
+    elif EVALS_DIR in src.parents:
+        # evals는 과거 리포 상태(삭제 전 룰을 적용한 리포)를 재현하는 자료라 삭제된 ID도 적는다
+        unknown = sorted(expand_ids(text) - set(DEFINED))
+    else:
+        unknown = sorted(expand_ids(text) - LIVE)
     assert not unknown, f"정의되지 않은 룰 ID를 참조한다: {unknown}"
 
 
@@ -163,7 +176,7 @@ def test_tool_dependency_table_names_existing_rules():
     assert len(table) >= 3, "도구 의존 표를 찾지 못했다"
     referenced = expand_ids("\n".join(table))
     assert referenced, "도구 의존 표에서 룰 ID를 하나도 찾지 못했다"
-    assert referenced <= set(DEFINED)
+    assert referenced <= LIVE
 
 
 def test_expand_ids_handles_grouped_notation():
@@ -171,6 +184,47 @@ def test_expand_ids_handles_grouped_notation():
         "R-ROLE-06", "R-ROLE-07", "R-ROLE-08", "R-ROLE-10", "R-ROLE-11"
     }
     assert expand_ids("R-BASE-01～03·08") == {"R-BASE-01", "R-BASE-02", "R-BASE-03", "R-BASE-08"}
+
+
+def test_deleted_rule_body_is_only_tombstone_and_reason():
+    """`(vN 삭제)` 룰의 블록에는 헤딩, '- 룰: 삭제됨.', '- 이유:' 세 줄만 둔다."""
+    lines = RULES.split("## 변경 이력")[0].splitlines()
+    for i, line in enumerate(lines):
+        m = HEADING.match(line)
+        if not (m and m.group("id") in DELETED):
+            continue
+        body = []
+        for nxt in lines[i + 1 :]:
+            if nxt.startswith(("### R-", "## ", "---")):
+                break
+            if nxt.strip():
+                body.append(nxt)
+        rid = m.group("id")
+        assert len(body) == 2 and body[0].startswith("- 룰: 삭제됨.") and body[1].startswith("- 이유:"), (
+            f"삭제된 {rid}의 본문은 '- 룰: 삭제됨.'과 '- 이유:' 두 줄뿐이어야 한다: {body}"
+        )
+
+
+@pytest.mark.parametrize("src", sorted(set(_id_reference_sources())), ids=lambda p: str(p.relative_to(PLUGIN)))
+def test_deleted_rule_ids_are_not_referenced_by_live_text(src):
+    """삭제된 룰 ID를 가리키는 곳이 있으면 리포에 없는 룰을 참조하게 된다(변경 이력과 그 룰 자신의 블록은 제외)."""
+    if EVALS_DIR in src.parents:
+        return  # 과거 리포 상태를 재현하는 자료라 삭제된 룰을 일부러 적는다
+    text = read(src)
+    if src == RULES_MD:
+        text = text.split("## 변경 이력")[0]
+    refs = defaultdict(list)
+    current = None
+    for line in text.splitlines():
+        if src == RULES_MD:
+            if m := HEADING.match(line):
+                current = m.group("id")
+            elif line.startswith("## "):
+                current = None
+        for rid in expand_ids(line) & DELETED:
+            if rid != current:
+                refs[rid].append(line.strip()[:60])
+    assert not refs, f"삭제된 룰을 참조하는 줄: {dict(refs)}"
 
 
 # ---- 카탈로그와 다른 문서의 정합성 ----
@@ -185,8 +239,8 @@ def test_layout_default_structure_covers_every_rule():
     covered = expand_ids(tree)
     # 'R-ROLE', 'R-GIT'처럼 번호 없이 범주 전체를 가리키는 표기
     for cat in re.findall(r"R-([A-Z]+)\b(?!-\d)", tree):
-        covered |= {i for i in DEFINED if i.startswith(f"R-{cat}-")}
-    missing = sorted(set(DEFINED) - covered)
+        covered |= {i for i in LIVE if i.startswith(f"R-{cat}-")}
+    missing = sorted(LIVE - covered)
     assert not missing, f"layout.md 기본 구조에 자리가 없는 룰: {missing}"
 
 

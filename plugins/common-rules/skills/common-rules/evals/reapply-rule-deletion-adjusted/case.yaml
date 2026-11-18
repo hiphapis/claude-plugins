@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: reapply-rule-deletion-adjusted
+context:
+  scaffold_script: place-files.sh
+expected_outcome: |
+  v15로 적용됐고 출처 표시가 확인된 리포를 현재 버전으로 올린다. 카탈로그에서 (vN 삭제)로 지운 R-ROLE-10의 문장은 기존 표시가 없지만 적용 기록에 조정으로 적혀 있어 사용자가 정한 문구다. 그래서 지우기 전에 물어야 하는데 비대화형 실행이라 묻지 못한다. 문장과 ID 주석을 그대로 두고, 조정 줄도 그대로 두며, 적용 기록에 R-ROLE-10의 미결정(삭제) 줄을 더한다. 바뀌지 않은 룰의 문장(R-ROLE-01, R-ROLE-06, R-ROLE-12)은 건드리지 않고 리포에 없는 룰을 새로 넣지 않는다. 적용 기록의 버전을 올린다. 실행 전 리포 룰에 커밋 권한이 없으므로 커밋하지 않는다.

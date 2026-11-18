@@ -16,7 +16,7 @@
 ```
 AGENTS.md                         # 역할 판별(R-ROLE-12), 인덱스·레이아웃 규약(R-DOC-01)
 docs/rules/
-  agent-roles.md                  # R-BASE-01～03·06·08·10～12, R-ROLE-01～11, R-SPEC
+  agent-roles.md                  # R-BASE-01～03·06·08·10～12, R-ROLE-01～09·11, R-SPEC
   task-lifecycle.md               # R-ISSUE, R-ORCA
   testing.md                      # R-TEST
   git-workflow.md                 # R-GIT
