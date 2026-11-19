@@ -6,12 +6,12 @@
 
 룰은 오케스트레이터·워커 분담(오케스트레이터는 코드를 한 줄도 고치지 않음), Orca 워크트리, GitHub 이슈 수명주기, 테스트 게이트, Git, 완료 보고, 문서 관리를 다룹니다. [`references/rules.md`](skills/common-rules/references/rules.md)에 룰마다 ID·별점·이유·전제 태그(`[gh]`, `[vault]`, `[ko]`, `[personal]`)를 달아 두었습니다. Orca 위에서 오케스트레이터·워커로 일하는 방식을 전제로 하므로, Orca 룰은 모든 리포에 들어갑니다.
 
-**현재 버전: 0.16.0** (룰 카탈로그 v16, 2026-11-18). 플러그인 버전 `0.N.0`은 늘 룰 카탈로그 버전 `vN`과 같습니다. 버전별 변경은 [`rules.md`](skills/common-rules/references/rules.md) 끝의 「변경 이력」에 있습니다.
+**현재 버전: 0.17.0** (룰 카탈로그 v17, 2026-11-18). 플러그인 버전 `0.N.0`은 늘 룰 카탈로그 버전 `vN`과 같습니다. 버전별 변경은 [`rules.md`](skills/common-rules/references/rules.md) 끝의 「변경 이력」에 있습니다.
 
 ## 설치 전에 알아 두세요
 
 - **[Orca](https://github.com/stablyai/orca) 위에서 돌아간다는 가정으로 만들었습니다.** 워크트리는 `orca worktree`로 만들고, 워커를 띄우고 감독하는 일(`dispatch`, `worker_done` 대기)은 `orca orchestration`으로 합니다. Orca 룰(R-ORCA)은 전제 태그 없이 모든 리포에 들어가므로, Orca를 쓰지 않는 환경에서는 역할 분담·워크트리 룰 상당수를 지킬 수 없습니다.
-- **오케스트레이터와 워커가 나뉩니다.** 지금 대화하는 세션(오케스트레이터)은 코드를 한 줄도 고치지 않고, 코드는 Orca가 띄운 워커가 씁니다. 워커 설정은 작업 등급별 현재값으로 룰에 박혀 있습니다(구현은 기계적·일반 `claude-sonnet-5-5` `low`·`medium`, 어려움 `claude-opus-5-5` `high` / 리뷰는 `claude-opus-5-5` `high`, 고위험 `xhigh`). 바꾸려면 `rules.md`의 R-ROLE-04를 고칩니다.
+- **오케스트레이터와 워커가 나뉩니다.** 지금 대화하는 세션(오케스트레이터)은 코드를 한 줄도 고치지 않고, 코드는 Orca가 띄운 워커가 씁니다. 워커 설정은 작업 등급별 현재값으로 룰에 박혀 있습니다(구현은 기계적·일반 `claude-sonnet-5-5` `low`·`medium`, 어려움 `claude-opus-5-5` `high` / 리뷰는 `claude-opus-5-5`로 구현 등급이 기계적·일반이면 `medium`, 어려움이면 `high`, 고위험 `xhigh`). 바꾸려면 `rules.md`의 R-ROLE-04를 고칩니다.
 - **함께 쓰는 도구가 있습니다.** 해당 룰을 넣을 리포라면 미리 준비해 두세요. 실행한 머신에 도구가 없으면 스킬이 "설치하고 넣기 / 룰만 넣기 / 빼기"를 묻고(플러그인과 `gh`는 동의하면 설치하고, Orca·ego-browser는 링크만 안내함. 물을 수 없으면 설치 없이 넣고 경고로 남김), 룰을 따르는 에이전트는 도구가 없을 때 다른 수단으로 우회하지 않고 멈춰서 묻습니다(R-BASE-10).
   - [worktree-teardown](../worktree-teardown) 플러그인 — 머지 직후 워크트리 감사(R-ORCA-12)
   - [oh-my-claudecode](https://github.com/Yeachan-Heo/oh-my-claudecode)의 `ccg` — 되돌릴 수 없는 변경에만 쓰는 3중 합의(R-ROLE-09)
