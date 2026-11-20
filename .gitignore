@@ -3,3 +3,6 @@
 __pycache__/
 .pytest_cache/
 .hypothesis/
+
+# claude plugin eval 실행 결과물 (재생성 가능, 로컬 보관)
+plugins/*/evals/results/
